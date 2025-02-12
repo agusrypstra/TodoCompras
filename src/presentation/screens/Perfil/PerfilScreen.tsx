@@ -3,9 +3,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import HeaderProfile from '../../components/Perfil/HeaderProfile.tsx';
 import WhatsAppButton from '../../components/Perfil/WhatsappButton.tsx';
 import { PerfilScreenProps } from '../../../presentation/interfaces/Perfil/PerfilScreenProps';
-import RedesBox from '../../components/Perfil/RedesBox.tsx';
 import DescriptionComponent from '../../components/Perfil/DescriptionComponent.tsx';
-import InformacionBox from '../../components/Perfil/Informacion/InformacionBox.tsx';
 import GaleriaFotosComponent from '../../components/Perfil/Galeria/GaleriaFotosComponent.tsx';
 import FooterComponent from '../../../presentation/components/footer/FooterComponent';
 
