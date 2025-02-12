@@ -1,41 +1,48 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import {Header} from './presentation/components/header.tsx';
-import {SearchBar} from './presentation/components/SearchBar.tsx';
+import React, { StrictMode } from 'react';
+
+import {Header} from './presentation/components/header/header.tsx';
 import { PaperProvider } from 'react-native-paper';
-import {CategoryContainer} from './presentation/components/CategoryContainer.tsx';
 import { NavigationContainer } from '@react-navigation/native';
 import './gesture-handler.native.tsx';
-import StackNavigator from './presentation/routes/StackNavigator.tsx';
-
+import { images, logos } from './assets/categoriesIcons/assets.ts';
+import PerfilScreen from './presentation/screens/Perfil/PerfilScreen.tsx';
+import FooterComponent from './presentation/components/footer/FooterComponent.tsx';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import RegistroScreen from './presentation/screens/Registro/RegistroScreen.tsx';
 const App = () => {
-  const handleSearch = (query: string) => {
-    console.log('Buscando:', query);
-    // Agrega tu lógica de búsqueda aquí
-  };
+  const description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quaerat, impedit perspiciatis ad veniam et eos dolor modi deserunt. Corporis harum ipsam eum aspernatur dolore totam cumque voluptatem nostrum reprehenderit quo.'
+  const fotos = new Array();
+  fotos.push( images.sec1)
+  fotos.push( images.sec2)
+  fotos.push( images.sec3)
   return (
-    <NavigationContainer>
-      <PaperProvider>
-      <Header />
-        <StackNavigator />
-        {/* <View style={styles.container}>
-            <SearchBar placeholder="Buscar..." onSearch={handleSearch} />
-            <CategoryContainer />
-        </View> */}
-      </PaperProvider>
-    </NavigationContainer>
+    // <StrictMode>
+      <GestureHandlerRootView>
+        <NavigationContainer>
+          <PaperProvider>
+            <Header />
+              {/* <StackNavigator /> */}
+
+                <RegistroScreen />
+                {/* <PerfilScreen avatar={logos.mecanico}
+                        name='Enzo Virgile'
+                        background={logos.emprendedores}
+                        phoneNumber={5492284556163}
+                        message="¡Hola! Estoy interesado en tus servicios."
+                        description={description}
+                        fotos={fotos}
+                        /> */}
+            {/* <View style={styles.container}>
+                <SearchBar placeholder="Buscar..." onSearch={handleSearch} />
+                <CategoryContainer />
+            </View> */}
+                    <FooterComponent />
+            
+          </PaperProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    // </StrictMode>
   );
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1, // Hace que el contenedor ocupe todo el espacio disponible
-    backgroundColor: '#f9f9f9', // Color de fondo de la pantalla
-    justifyContent: 'flex-start', // Alinea el contenido desde la parte superior
-    padding: 20, // Márgenes internos (puedes ajustar este valor según lo necesites)
-    gap: 20,
-    marginHorizontal:10
-  },
-});
