@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Switch, Modal } from 'react-native';
-import { Checkbox } from 'react-native-paper'; // Importamos Checkbox de react-native-paper
+import { Checkbox, Icon } from 'react-native-paper'; // Importamos Checkbox de react-native-paper
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
-import RNPickerSelect from 'react-native-picker-select';
+// import RNPickerSelect from 'react-native-picker-select'; 
 
 interface Provincia {
   id: string;
@@ -63,7 +63,7 @@ const RegisterForm: React.FC = () => {
         setProvincias(provinciasData);
       })
       .catch(error => {
-        Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
+        // Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
       });
   }, []);
   
@@ -196,7 +196,7 @@ const RegisterForm: React.FC = () => {
         <TextInput style={styles.input} value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *" keyboardType="phone-pad" />
         <TextInput style={styles.input} value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp *" keyboardType="phone-pad" />
 
-        <View style={styles.input}>
+        {/* <View style={styles.input}>
           <RNPickerSelect
             onValueChange={(value) => {
               setProvinciaSeleccionada(value);
@@ -217,7 +217,39 @@ const RegisterForm: React.FC = () => {
               style={pickerStyles}
             />
           </View>
-        ) : null}
+        ) : null} */}
+
+
+          <Picker
+            selectedValue={provinciaSeleccionada}
+            onValueChange={(value) => {
+              setProvinciaSeleccionada(value);
+              setLocalidadSeleccionada(''); // Reiniciar la localidad seleccionada
+            }}
+            style={styles.picker}
+          >
+            <Picker.Item label="Seleccione una provincia" value={null} />
+            {provincias.map((provincia, index) => (
+              <Picker.Item key={index} label={provincia.label} value={provincia.value} />
+            ))}
+          </Picker>
+
+
+          {provinciaSeleccionada ? (
+            <>
+              <Picker
+                selectedValue={localidadSeleccionada}
+                onValueChange={(value) => setLocalidadSeleccionada(value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Seleccione una localidad" value={null} />
+                {localidades.map((localidad, index) => (
+                  <Picker.Item key={index} label={localidad.label} value={localidad.value} />
+                ))}
+              </Picker>
+            </>
+          ) : null}
+
 
 
 
@@ -300,11 +332,10 @@ const RegisterForm: React.FC = () => {
             </View>
           </>
         )}
-
         <View style={styles.redesContainer}>
           <Text style={styles.label}>Redes Sociales</Text>
           <View style={styles.checkboxContainer}>
-            <Checkbox
+            <Checkbox.Android
               status={instagramHabilitado ? 'checked' : 'unchecked'}
               onPress={() => setInstagramHabilitado(!instagramHabilitado)}
             />
@@ -324,7 +355,7 @@ const RegisterForm: React.FC = () => {
           )}
 
           <View style={styles.checkboxContainer}>
-            <Checkbox
+            <Checkbox.Android
               status={facebookHabilitado ? 'checked' : 'unchecked'}
               onPress={() => setFacebookHabilitado(!facebookHabilitado)}
             />
@@ -486,9 +517,6 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 15,
     backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
   },
   hourPicker: {
     width: '30%',

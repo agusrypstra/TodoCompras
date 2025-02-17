@@ -3,7 +3,6 @@ import React, { StrictMode } from 'react';
 import {Header} from './presentation/components/header/header.tsx';
 import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
-import './gesture-handler.native.tsx';
 import { images, logos } from './assets/categoriesIcons/assets.ts';
 import PerfilScreen from './presentation/screens/Perfil/PerfilScreen.tsx';
 import FooterComponent from './presentation/components/footer/FooterComponent.tsx';
@@ -36,7 +35,7 @@ const App = () => {
                 <SearchBar placeholder="Buscar..." onSearch={handleSearch} />
                 <CategoryContainer />
             </View> */}
-                    <FooterComponent />
+                    {/* <FooterComponent /> */}
             
           </PaperProvider>
         </NavigationContainer>
