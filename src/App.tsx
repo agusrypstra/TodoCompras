@@ -8,6 +8,7 @@ import PerfilScreen from './presentation/screens/Perfil/PerfilScreen.tsx';
 import FooterComponent from './presentation/components/footer/FooterComponent.tsx';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import RegistroScreen from './presentation/screens/Registro/RegistroScreen.tsx';
+import { LoginScreen } from './presentation/screens/Login/LoginScreen.tsx';
 const App = () => {
   const description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quaerat, impedit perspiciatis ad veniam et eos dolor modi deserunt. Corporis harum ipsam eum aspernatur dolore totam cumque voluptatem nostrum reprehenderit quo.'
   const fotos = new Array();
@@ -22,7 +23,10 @@ const App = () => {
             <Header />
               {/* <StackNavigator /> */}
 
-                <RegistroScreen />
+                {/* <RegistroScreen /> */}
+
+                <LoginScreen />
+
                 {/* <PerfilScreen avatar={logos.mecanico}
                         name='Enzo Virgile'
                         background={logos.emprendedores}

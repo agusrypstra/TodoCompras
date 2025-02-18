@@ -3,6 +3,8 @@ import { View, TextInput, Text, StyleSheet, ScrollView, Alert, TouchableOpacity,
 import { Checkbox, Icon } from 'react-native-paper'; // Importamos Checkbox de react-native-paper
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import {CustomCheckboxComponent} from '../../components/FormComponents/CustomCheckboxComponent';
+import CustomTextInput from '../../components/FormComponents/CustomTextInput';
 // import RNPickerSelect from 'react-native-picker-select'; 
 
 interface Provincia {
@@ -189,12 +191,14 @@ const RegisterForm: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Registro</Text>
+        <Text style={styles.title}>¡Registra tu negocio!</Text>
 
-        <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *" />
-      <TextInput style={styles.input} value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *" />
-        <TextInput style={styles.input} value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *" keyboardType="phone-pad" />
-        <TextInput style={styles.input} value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp *" keyboardType="phone-pad" />
+        {/* <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/> */}
+        <CustomTextInput value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/>
+        <CustomTextInput value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *"/>
+        <CustomTextInput value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *"/>
+
+        <CustomTextInput value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp" keyboardType="phone-pad"/>
 
         {/* <View style={styles.input}>
           <RNPickerSelect
@@ -334,63 +338,31 @@ const RegisterForm: React.FC = () => {
         )}
         <View style={styles.redesContainer}>
           <Text style={styles.label}>Redes Sociales</Text>
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={instagramHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setInstagramHabilitado(!instagramHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Instagram</Text>
-          </View>
-          {instagramHabilitado && (
-            <>
-            <TextInput
-              style={styles.input}
-              value={instagram}
-              onChangeText={setInstagram}
-              placeholder="Ejemplo: https://www.instagram.com/tuusuario"
-            />
-            <Text style={styles.helperText}>Ingresa el enlace completo de tu perfil</Text>
-
-            </>
-          )}
-
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={facebookHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setFacebookHabilitado(!facebookHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Facebook</Text>
-          </View>
-          {facebookHabilitado && (
-            <>
-            <TextInput
-              style={styles.input}
-              value={facebook}
-              onChangeText={setFacebook}
-              placeholder="Ejemplo: https://www.facebook.com/tuusuario"
-            />
-                <Text style={styles.helperText}>Ingresa el enlace completo de tu perfil</Text>
-
-            </>
-          )}
-
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={webpageHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setWebpageHabilitado(!webpageHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Página Web</Text>
-          </View>
-          {webpageHabilitado && (
-            <TextInput
-              style={styles.input}
-              value={webpage}
-              onChangeText={setWebpage}
-              placeholder="Ejemplo: https://www.tupaginaweb.com/"
-            />
-          )}
+          <CustomCheckboxComponent
+            label='Instagram'
+            enabled={instagramHabilitado} 
+            setEnabled={setInstagramHabilitado} 
+            value={instagram}
+            setValue={setInstagram} 
+            placeholder="Ejemplo: https://www.instagram.com/tuusuario"
+          /> 
+          <CustomCheckboxComponent
+            label='Facebook'
+            enabled={facebookHabilitado} 
+            setEnabled={setFacebookHabilitado} 
+            value={facebook}
+            setValue={setFacebook} 
+            placeholder="Ejemplo: https://www.facebook.com/tuusuario"
+          /> 
+          <CustomCheckboxComponent
+            label='Webpage'
+            enabled={webpageHabilitado} 
+            setEnabled={setWebpageHabilitado} 
+            value={webpage}
+            setValue={setWebpage} 
+            placeholder="Ejemplo: https://www.tupaginaweb.com/"
+          /> 
         </View>
-
         <View style={styles.checkboxContainer}>
       <Checkbox.Android
         status={aceptoTerminos ? 'checked' : 'unchecked'}
@@ -431,12 +403,12 @@ const RegisterForm: React.FC = () => {
         </View>
 
         <TouchableOpacity
-  disabled={!aceptoTerminos} // Si no acepta los términos, deshabilitado
-  style={[styles.submitButton, !aceptoTerminos && styles.botonDeshabilitado]}
-  onPress={handleSubmit}
->
-  <Text style={styles.textoBoton}>Enviar</Text>
-</TouchableOpacity>
+          disabled={!aceptoTerminos} // Si no acepta los términos, deshabilitado
+          style={[styles.submitButton, !aceptoTerminos && styles.botonDeshabilitado]}
+          onPress={handleSubmit}
+        >
+          <Text style={styles.textoBoton}>Enviar</Text>
+        </TouchableOpacity>
         </View>
     </ScrollView>
   );
@@ -474,18 +446,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginLeft: '10%',
   },
-  helperText:{
-    fontSize: 15,
-    marginBottom: 10
-  },
   input: {
     width: '80%',
+    
+    marginBottom: 15,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+  },
+  inputOnFocus:{
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-    textAlign: 'center',
   },
   pickerStyles:{
       fontSize: 16,
