@@ -1,37 +1,68 @@
-import React from 'react'
-import { KeyboardTypeOptions, StyleSheet, Text, TextInput, View } from 'react-native'
+import React, { useState } from 'react';
+import {
+  Keyboard,
+  KeyboardTypeOptions,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
-interface CustomInputProps {
-    value: string;
-    onChangeText: (text: string) => void;
-    placeholder: string;
-    keyboardType?: KeyboardTypeOptions; // Permite solo valores válidos para keyboardType
-  }
-
-export const CustomTextInput: React.FC<CustomInputProps>  = (
-    {value ,onChangeText,placeholder,keyboardType="default"}
-) => {
-  return (
-    <>
-    <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText} // Llama a la función del padre
-        keyboardType={keyboardType}
-        />
-    </>
-  )
+interface CustomInputProps extends TextInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
 }
+
+export const CustomTextInput: React.FC<CustomInputProps> = ({
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType = 'default',
+  secureTextEntry = false,
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <TextInput
+          style={[styles.input, isFocused && styles.inputFocused]}
+          placeholder={placeholder}
+          value={value}
+          onChangeText={onChangeText}
+          keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+        />
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
+
 const styles = StyleSheet.create({
-    input: {
-        width: '80%',
-        
-        marginBottom: 15,
-        paddingVertical: 15,
-        backgroundColor: '#fff',
-        textAlign: 'center',
-      },
-    })
+  container: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  input: {
+    width: '80%',
+    marginBottom: 15,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  inputFocused: {
+    borderColor: '#007bff', // Cambia el borde cuando está enfocado
+    borderWidth: 2,
+  },
+});
 
 export default CustomTextInput;

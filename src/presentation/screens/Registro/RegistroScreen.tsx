@@ -5,6 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import {CustomCheckboxComponent} from '../../components/FormComponents/CustomCheckboxComponent';
 import CustomTextInput from '../../components/FormComponents/CustomTextInput';
+import CustomSubmit from '../../../presentation/components/FormComponents/CustomSubmit';
 // import RNPickerSelect from 'react-native-picker-select'; 
 
 interface Provincia {
@@ -363,7 +364,7 @@ const RegisterForm: React.FC = () => {
             placeholder="Ejemplo: https://www.tupaginaweb.com/"
           /> 
         </View>
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
       <Checkbox.Android
         status={aceptoTerminos ? 'checked' : 'unchecked'}
         onPress={() => setAceptoTerminos(!aceptoTerminos)}
@@ -373,10 +374,10 @@ const RegisterForm: React.FC = () => {
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <Text style={styles.linkText}>términos y condiciones</Text>
         </TouchableOpacity>
-      </Text>
+      </Text> */}
 
       {/* Modal para mostrar los términos */}
-      <Modal
+        {/* <Modal
         visible={modalVisible}
         animationType="slide"
         transparent={true}
@@ -399,16 +400,18 @@ const RegisterForm: React.FC = () => {
             </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        </View>
+        </Modal>
+        </View> */}
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           disabled={!aceptoTerminos} // Si no acepta los términos, deshabilitado
           style={[styles.submitButton, !aceptoTerminos && styles.botonDeshabilitado]}
           onPress={handleSubmit}
         >
           <Text style={styles.textoBoton}>Enviar</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        <CustomSubmit onPress={handleSubmit} />
         </View>
     </ScrollView>
   );
