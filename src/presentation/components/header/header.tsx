@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 400, // Ajusta el ancho del logo
-    height: 60, // Ajusta la altura del logo
+    width: '80%', // Ajusta el ancho del logo
+    height: '100%', // Ajusta la altura del logo
   },
 });

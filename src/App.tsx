@@ -25,7 +25,7 @@ const App = () => {
 
                 {/* <RegistroScreen /> */}
 
-                <LoginScreen />
+                  <LoginScreen />
 
                 {/* <PerfilScreen avatar={logos.mecanico}
                         name='Enzo Virgile'

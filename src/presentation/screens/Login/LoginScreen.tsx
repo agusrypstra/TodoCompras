@@ -51,12 +51,15 @@ export const LoginScreen: React.FC = () => {
         value={password}
         secureTextEntry
       />
+      
+      <TouchableOpacity style={styles.submit} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Ingresar</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={() => console.log("Recuperar contraseña")}>
         <Text style={styles.forgotPassword}>¿Olvidó su contraseña?</Text>
       </TouchableOpacity>
 
-      <CustomSubmit onPress={handleSubmit} />
 
       <TouchableOpacity onPress={() => console.log("Ir a registro")}>
         <Text style={styles.registerText}>
@@ -79,6 +82,20 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  submit:{
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5
+  },
+  disabledButton: {
+    backgroundColor: "#cccccc"
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold"
   },
   errorText: {
     color: "red",
