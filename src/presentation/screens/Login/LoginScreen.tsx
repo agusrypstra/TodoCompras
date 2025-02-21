@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import CustomTextInput from "../../components/FormComponents/CustomTextInput";
-import CustomSubmit from "../../../presentation/components/FormComponents/CustomSubmit";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export const LoginScreen: React.FC = () => {
+type RootStackParamList = {
+  Login: undefined; // Home no recibe parámetros
+  Registro: undefined; // Home no recibe parámetros
+  Home: undefined; // Home no recibe parámetros
+};
+
+type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+export const LoginScreen: React.FC<LoginScreenProps> = ({navigation} :LoginScreenProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,12 +34,15 @@ export const LoginScreen: React.FC = () => {
       setError("La contraseña debe tener al menos 6 caracteres");
       return;
     }
-
     setError("");
     console.log("Email:", email);
     console.log("Password:", password);
+    navigation.navigate('Home')    
   };
 
+  const registerButton = ()=>{
+    navigation.navigate("Registro")
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Iniciar Sesión</Text>
@@ -61,7 +72,7 @@ export const LoginScreen: React.FC = () => {
       </TouchableOpacity>
 
 
-      <TouchableOpacity onPress={() => console.log("Ir a registro")}>
+      <TouchableOpacity onPress={registerButton} >
         <Text style={styles.registerText}>
           ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
         </Text>
@@ -76,10 +87,10 @@ const styles = StyleSheet.create({
     padding: 30,
     height: "75%",
     justifyContent: "center",
-    gap: 10,
+    gap: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 32,
     fontWeight: "bold",
     marginBottom: 10,
   },

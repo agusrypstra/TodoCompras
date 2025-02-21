@@ -1,26 +1,29 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/Home/HomeScreen.tsx'
-import AboutScreen from '../screens/About/AboutScreen.tsx';
-import MerchantsScreen from '../screens/Merchants/MerchantsScreen.tsx';
-import RestaurantsScreen from '../screens/Restaurants/RestaurantsScreen.tsx';
-import { RestaurantScreen } from '../screens/Restaurants/RestaurantScreen.tsx';
-import { RootStackParams } from '../interfaces/RootStackParams.tsx';
+// navigation/StackNavigator.tsx
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {LoginScreen} from '../screens/Login/LoginScreen';
+import RegisterScreen from '../screens/Registro/RegistroScreen';
+import HomeScreen from '../screens/Home/HomeScreen';
+// import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
+// Definir los tipos de las rutas
+export type RootStackParamList = {
+  Login: undefined;
+  Registro: undefined;
+  Home: undefined;
+};
 
+// Crear el Stack Navigator
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const Stack = createStackNavigator<RootStackParams>();
+const StackNavigator = () => {
+  return (
+    <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Registro" component={RegisterScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+    </Stack.Navigator>
+  );
+};
 
-export const MyStack = ()=> {
-    return (
-      <Stack.Navigator screenOptions={{
-        headerShown: false
-      }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="Merchants" component={MerchantsScreen} />
-        <Stack.Screen name="Restaurants" component={RestaurantsScreen} />
-        <Stack.Screen name="Restaurant" component={RestaurantScreen} />
-      </Stack.Navigator>
-    );
-}
-export default MyStack;
+export default StackNavigator;
