@@ -1,12 +1,14 @@
 const logos = {
-    polleria: require('./pollo.jpg' as any),
+    polleria: require('./polleria.jpg' as any),
     carniceria: require('./carniceria.jpg'),
     comidas: require('./cocinero.jpg'),
     pescaderia:require('./pescaderia.jpg'),
     locales:require('./locales.jpg'),
     emprendedores:require('./emprendedores.jpg'),
     oficios:require('./oficios.jpg'),
-    mecanico:require('./mecanico.jpg')
+    mecanico:require('./mecanico.jpg'),
+    panaderia:require('./panaderia.jpg'),
+    verduleria:require('./verduleria.jpg'),
   };
 
   const images = {
