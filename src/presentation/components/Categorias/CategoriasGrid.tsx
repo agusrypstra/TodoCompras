@@ -10,7 +10,7 @@ interface Categoria {
 
 interface CategoriasGridProps {
   categorias: Categoria[];
-  onCategoriaPress: (nombre: string) => void;
+  onCategoriaPress: (id: number) => void;
 }
 
 const CategoriasGrid: React.FC<CategoriasGridProps> = ({ categorias, onCategoriaPress }) => {
@@ -21,7 +21,7 @@ const CategoriasGrid: React.FC<CategoriasGridProps> = ({ categorias, onCategoria
           key={categoria.id}
           nombre={categoria.nombre}
           imagen={categoria.imagen}
-          onPress={() => onCategoriaPress(categoria.nombre)}
+          onPress={() => onCategoriaPress(categoria.id)}
         />
       ))}
     </View>
