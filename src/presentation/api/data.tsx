@@ -1,14 +1,20 @@
-import { logos } from "../../assets/categoriesIcons/assets";
+import { logos, images , banners} from "../../assets/categoriesIcons/assets";
 
 export const categorias = [{
   id:1,
-  nombre:'Locales'
+  nombre:'Locales',
+  imagen: banners.locales
+
 },
   {id:2,
-  nombre:'Emprendimientos'}
+  nombre:'Emprendimientos',
+  imagen: banners.emprendimientos
+}
 ,{
   id:3,
-  nombre:'Profesionales'}
+  nombre:'Profesionales',
+  imagen: banners.profesionales
+}
 ]
 export const subcategorias = [
   { id: 1,categoriaId: 1, nombre: 'Comida', imagen: logos.comidas },

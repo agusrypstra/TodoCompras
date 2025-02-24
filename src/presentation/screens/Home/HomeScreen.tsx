@@ -36,6 +36,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }: HomeScreen
             handlePress={handlePress}
             id={categoria.id}
             nombre={categoria.nombre}
+            
           />
         ))}
       </View>

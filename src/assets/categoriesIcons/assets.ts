@@ -17,4 +17,9 @@ const logos = {
     sec3: require('../todoCompras/sec3.jpg' as any),
   }
 
-  export {logos,images}
+  const banners = {
+    emprendimientos: require('../banners/emprendimientos.jpg'),
+    locales: require('../banners/locales.jpg'),
+    profesionales: require('../banners/profesionales.jpg')
+  }
+  export {logos,images,banners}
