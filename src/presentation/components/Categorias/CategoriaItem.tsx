@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-interface CategoriaItemProps {
+interface ElementItemProps {
+  id:number;
   nombre: string;
   imagen: any; // Usa ImageSourcePropType si trabajas con imágenes locales
   onPress: () => void;
 }
 
-const CategoriaItem: React.FC<CategoriaItemProps> = ({ nombre, imagen, onPress }) => {
+const ElementItem: React.FC<ElementItemProps> = ({id, nombre, imagen, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageContainer}>
@@ -52,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoriaItem;
+export default ElementItem;

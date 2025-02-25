@@ -1,11 +1,12 @@
 import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import CategoriasGrid from '../../components/Categorias/CategoriasGrid';
+import CategoriasGrid from '../../components/Categorias/DisplayGrid';
 import { ScrollView } from 'react-native-gesture-handler';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from 'src/presentation/routes/StackNavigator';
+import DisplayGrid from '../../components/Categorias/DisplayGrid';
 
 // Definir el tipo para navigation
 type CategoriasScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Categorias'>;
@@ -29,9 +30,9 @@ const CategoriasScreen: React.FC<CategoriasScreenProps> = ({ route }) => {
       <View style={{ flex: 1, padding: 30, alignItems: 'center' }}>
         <Text style={styles.title}>Subcategorías</Text>
         {subcategorias && ( // Verificar si subcategorías está definido
-          <CategoriasGrid
-            categorias={subcategorias} // Mostrar las subcategorías recibidas
-            onCategoriaPress={handleSubcategoriaPress}
+          <DisplayGrid
+            elementos={subcategorias} // Mostrar las subcategorías recibidas
+            onElementPress={handleSubcategoriaPress}
           />
         )}
       </View>
