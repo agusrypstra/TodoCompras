@@ -12,9 +12,6 @@ const BannerCategory: React.FC<BannerCategoryProps> = ({ handlePress, id, nombre
   return (
     <TouchableOpacity onPress={() => handlePress(id)} style={styles.container}>
       <Image source={imagen} style={styles.image} />
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>{nombre}</Text>
-      </View>
     </TouchableOpacity>
   );
 };
@@ -25,8 +22,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   image: {
-    width: 150, // Ajusta el tamaño según tus necesidades
-    height: 150, // Ajusta el tamaño según tus necesidades
+    width: 350, // Ajusta el tamaño según tus necesidades
+    height: 220, // Ajusta el tamaño según tus necesidades
     borderRadius: 10, // Bordes redondeados
   },
   textContainer: {

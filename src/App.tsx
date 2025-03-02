@@ -13,6 +13,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './presentation/screens/Home/HomeScreen.tsx';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StackNavigator from './presentation/routes/StackNavigator.tsx';
+import { View } from 'react-native';
 
 type RootStackParamList = {
   Login: undefined;
@@ -36,25 +37,6 @@ const App = () => {
           <PaperProvider>
             <Header />
               <StackNavigator />
-
-                {/* <RegistroScreen /> */}
-
-                  {/* <LoginScreen /> */}
-
-                {/* <PerfilScreen avatar={logos.mecanico}
-                        name='Enzo Virgile'
-                        background={logos.emprendedores}
-                        phoneNumber={5492284556163}
-                        message="¡Hola! Estoy interesado en tus servicios."
-                        description={description}
-                        fotos={fotos}
-                        /> */}
-            {/* <View style={styles.container}>
-                <SearchBar placeholder="Buscar..." onSearch={handleSearch} />
-                <CategoryContainer />
-            </View> */}
-                    {/* <FooterComponent /> */}
-            
           </PaperProvider>
         </NavigationContainer>
       </GestureHandlerRootView>

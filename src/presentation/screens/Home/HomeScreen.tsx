@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BannerCategory from './../../../presentation/components/Categorias/BannerCategory';
@@ -27,7 +27,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }: HomeScreen
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Inicio</Text>
       <View style={styles.sectionsContainer}>
         {categorias.map((categoria) => (
@@ -36,25 +36,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }: HomeScreen
             handlePress={handlePress}
             id={categoria.id}
             nombre={categoria.nombre}
-            
+            imagen={categoria.imagen}            
           />
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     gap: 50,
-    paddingVertical: 30,
   },
   title: {
     fontSize: 35,
     fontWeight: 'bold',
     color: '#333',
+    textAlign:'center'
   },
   sectionsContainer: {
     width: '100%',
@@ -62,7 +61,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 40,
-    alignItems: 'center',
+    marginVertical: 100
+    // alignItems: 'center',
   },
 });
 
