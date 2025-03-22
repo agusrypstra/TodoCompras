@@ -5,7 +5,8 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import {CustomCheckboxComponent} from '../../components/FormComponents/CustomCheckboxComponent';
 import CustomTextInput from '../../components/FormComponents/CustomTextInput';
-import CustomSubmit from '../../../presentation/components/FormComponents/CustomSubmit';
+import CustomSubmit from '../../components/FormComponents/CustomSubmit';
+import CustomPicker from '../../../presentation/components/FormComponents/CustomPicker';
 // import RNPickerSelect from 'react-native-picker-select'; 
 
 interface Provincia {
@@ -24,7 +25,7 @@ interface OpcionPicker {
 }
 
 
-const RegisterForm: React.FC = () => {
+const RegistroLocal: React.FC = () => {
   const [nombreApellido, setNombreApellido] = useState<string>('');
   const [nombreComercial, setNombreComercial] = useState<string>('');
   const [numeroContacto, setNumeroContacto] = useState<string>('');
@@ -47,8 +48,8 @@ const RegisterForm: React.FC = () => {
   const [descripcion, setDescripcion] = useState<string>('');
   const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
   const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
-  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState('');
-  const [localidadSeleccionada, setLocalidadSeleccionada] = useState('');
+  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
+  const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   
@@ -90,11 +91,11 @@ const RegisterForm: React.FC = () => {
   }, [provinciaSeleccionada]);
   
 
-  const categoriasDisponibles: { [key: string]: string[] } = {
-    Emprendimiento: ['Artesanías', 'Repostería', 'Ropa', 'Accesorios'],
-    Local: ['Restaurante', 'Tienda de ropa', 'Ferretería', 'Supermercado'],
-    Oficio: ['Electricista', 'Plomero', 'Carpintero', 'Mecánico'],
-  };
+  const categoriasDisponibles = [
+    { label: 'Emprendimiento', value: 'emprendimiento' },
+      { label: 'Local', value: 'local' },
+      { label: 'Oficio', value: 'oficio' }
+  ]
 
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -201,82 +202,20 @@ const RegisterForm: React.FC = () => {
 
         <CustomTextInput value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp" keyboardType="phone-pad"/>
 
-        {/* <View style={styles.input}>
-          <RNPickerSelect
-            onValueChange={(value) => {
-              setProvinciaSeleccionada(value);
-              setLocalidadSeleccionada(''); // Reiniciar la localidad seleccionada
-            }}
-            items={provincias}
-            placeholder={{ label: 'Seleccione una provincia', value: null }}
-            style={pickerStyles}
-          />
-        </View>
-
-        {provinciaSeleccionada ? (
-          <View style={styles.input}>
-            <RNPickerSelect
-              onValueChange={(value) => setLocalidadSeleccionada(value)}
-              items={localidades}
-              placeholder={{ label: 'Seleccione una localidad', value: null }}
-              style={pickerStyles}
-            />
-          </View>
-        ) : null} */}
-
-
-          <Picker
-            selectedValue={provinciaSeleccionada}
-            onValueChange={(value) => {
-              setProvinciaSeleccionada(value);
-              setLocalidadSeleccionada(''); // Reiniciar la localidad seleccionada
-            }}
-            style={styles.picker}
-          >
-            <Picker.Item label="Seleccione una provincia" value={null} />
-            {provincias.map((provincia, index) => (
-              <Picker.Item key={index} label={provincia.label} value={provincia.value} />
-            ))}
-          </Picker>
-
+        <CustomPicker selectedValue={provinciaSeleccionada} items={provincias} onValueChange={setProvinciaSeleccionada} placeholder='Seleccionar provincia'/>
 
           {provinciaSeleccionada ? (
-            <>
-              <Picker
-                selectedValue={localidadSeleccionada}
-                onValueChange={(value) => setLocalidadSeleccionada(value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Seleccione una localidad" value={null} />
-                {localidades.map((localidad, index) => (
-                  <Picker.Item key={index} label={localidad.label} value={localidad.value} />
-                ))}
-              </Picker>
-            </>
+            <CustomPicker selectedValue={localidadSeleccionada} items={localidades} onValueChange={setLocalidadSeleccionada} placeholder='Seleccionar localidad'/>
           ) : null}
 
 
 
-
-        <Text style={styles.label}>Tipo de Perfil *</Text>
-        <Picker selectedValue={tipoPerfil} onValueChange={(itemValue: string) => {
-          setTipoPerfil(itemValue);
-          setCategoria('');
-        }} style={styles.picker}>
-          <Picker.Item label="Emprendimiento" value="Emprendimiento" />
-          <Picker.Item label="Local" value="Local" />
-          <Picker.Item label="Oficio" value="Oficio" />
-        </Picker>
-
-        <Text style={styles.label}>Categoría *</Text>
-        <Picker selectedValue={categoria} onValueChange={(itemValue: string) => setCategoria(itemValue)} style={styles.picker}>
-          {categoriasDisponibles[tipoPerfil].map((cat) => (
-            <Picker.Item key={cat} label={cat} value={cat} />
-          ))}
-        </Picker>
+  
+        <CustomPicker items={categoriasDisponibles} selectedValue={''} onValueChange={setCategoria} placeholder={'Categoria'}
+        />
         <>
           <Text style={styles.label}>Descripcion</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
+          <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
         </>
         <Text style={styles.label}>Servicio 24 horas</Text>
         <View style={styles.switchContainer}>
@@ -364,52 +303,6 @@ const RegisterForm: React.FC = () => {
             placeholder="Ejemplo: https://www.tupaginaweb.com/"
           /> 
         </View>
-        {/* <View style={styles.checkboxContainer}>
-      <Checkbox.Android
-        status={aceptoTerminos ? 'checked' : 'unchecked'}
-        onPress={() => setAceptoTerminos(!aceptoTerminos)}
-      />
-      <Text style={styles.checkboxLabel}>
-        Acepto los{' '}
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.linkText}>términos y condiciones</Text>
-        </TouchableOpacity>
-      </Text> */}
-
-      {/* Modal para mostrar los términos */}
-        {/* <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Términos y Condiciones</Text>
-            <ScrollView style={styles.modalScroll}>
-              <Text style={styles.modalText}>
-                Aquí van los términos y condiciones detallados. Puedes escribir
-                todo el texto que desees.
-              </Text>
-            </ScrollView>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-              </View>
-            </View>
-        </Modal>
-        </View> */}
-
-        {/* <TouchableOpacity
-          disabled={!aceptoTerminos} // Si no acepta los términos, deshabilitado
-          style={[styles.submitButton, !aceptoTerminos && styles.botonDeshabilitado]}
-          onPress={handleSubmit}
-        >
-          <Text style={styles.textoBoton}>Enviar</Text>
-        </TouchableOpacity> */}
 
         <CustomSubmit onPress={handleSubmit} />
         </View>
@@ -488,10 +381,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   picker: {
-    width: '80%',
+    width: '100%',
     height: 50,
     marginBottom: 15,
     backgroundColor: '#fff',
+    color:"#999"
   },
   hourPicker: {
     width: '30%',
@@ -554,7 +448,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textArea: {
+    backgroundColor:'#FFF',
     height: 100,
+    color: '#000',
+    padding: 5,
+    width: '100%'
   },
   uploadButton: {
     backgroundColor: '#007bff',
@@ -622,4 +520,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterForm;
+export default RegistroLocal;

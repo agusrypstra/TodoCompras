@@ -5,17 +5,18 @@ import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import DrawerNavigator from './presentation/routes/StackNavigator.tsx';
-import Footer from './presentation/components/footer/FooterComponent.tsx';
 const App = () => {
   return (
+    <PaperProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <PaperProvider>
+        
           <Header />
           <DrawerNavigator />
-        </PaperProvider>
+        
       </NavigationContainer>
     </GestureHandlerRootView>
+    </PaperProvider>
   );
 };
 export default App;

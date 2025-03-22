@@ -32,6 +32,7 @@ export const CustomTextInput: React.FC<CustomInputProps> = ({
         <TextInput
           style={[styles.input, isFocused && styles.inputFocused]}
           placeholder={placeholder}
+          placeholderTextColor="#888"
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
@@ -50,7 +51,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
-    width: '80%',
+    color:'#333',
+    width: '100%',
     marginBottom: 15,
     paddingVertical: 15,
     backgroundColor: '#fff',

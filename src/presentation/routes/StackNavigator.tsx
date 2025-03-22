@@ -2,19 +2,22 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { LoginScreen } from '../screens/Login/LoginScreen';
-import RegisterScreen from '../screens/Registro/RegistroScreen';
+import RegistroLocal from '../screens/RegistroLocal/RegistroLocal';
 import HomeScreen from '../screens/Home/HomeScreen';
 import CategoriasScreen from '../screens/Categorias/CategoriasScreen';
 import PerfilesScreen from '../screens/Categorias/PerfilesScreen';
+import PerfilScreen from '../screens/Perfil/PerfilScreen';
 
 // Definir los tipos de las rutas
+
 export type RootStackParamList = {
-  navigate(arg0: string): void;
+  navigate(arg0: string, arg1: { perfilId: number; }): unknown;
   Login: undefined;
   Registro: undefined;
   Home: undefined;
   Categorias: { id: number; subcategorias?: any[] };
   Perfiles: { subcategoriaId: number };
+  Perfil: {perfilId: number};
 };
 
 // Crear el Stack Navigator
@@ -23,12 +26,13 @@ const Drawer = createDrawerNavigator();
 
 const StackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName='Registro' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Registro" component={RegisterScreen} />
+      <Stack.Screen name="Registro" component={RegistroLocal} />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Categorias" component={CategoriasScreen} />
       <Stack.Screen name="Perfiles" component={PerfilesScreen} />
+      <Stack.Screen name="Perfil" component={PerfilScreen} />
     </Stack.Navigator>
   );
 };

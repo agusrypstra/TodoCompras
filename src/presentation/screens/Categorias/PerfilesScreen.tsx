@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { View, StyleSheet } from 'react-native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from 'src/presentation/routes/StackNavigator';
-import {usuarios} from './../../api/data'
+import {gridElement, usuarios} from './../../api/data'
 import DisplayGrid from '../../../presentation/components/Categorias/DisplayGrid';
 
 
@@ -10,29 +10,31 @@ interface PerfilesScreenProps {
   route: RouteProp<RootStackParamList, 'Perfiles'>;
 }
 
-const PerfilesScreen: React.FC<PerfilesScreenProps> = () => {
+export const PerfilesScreen: React.FC<PerfilesScreenProps> = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'Perfiles'>>();
   const { subcategoriaId } = route.params;
-
-  const onPress = ()=>{
-    console.log('object')
+  const navigation = useNavigation<RootStackParamList>();
+  const onPress = (id: number)=>{
+    navigation.navigate('Perfil', {perfilId: id});
   }
 
-  const usuariosFiltrados = usuarios.filter(
-    (usuario) => usuario.subCategoriaId === subcategoriaId
-  );
-  
+  const usuariosFiltrados: gridElement[] = usuarios
+  .filter((usuario) => usuario.subCategoriaId === subcategoriaId) // Filtra por subcategoría
+  .map((usuario) => ({
+    id: usuario.id, // Extrae el id
+    nombre: usuario.info.nombre, // Extrae el nombre desde info
+    imagen: usuario.imagenes.avatar, // Extrae la imagen desde imagenes.avatar
+  }));
 
-  return (
-    <View style={styles.container}>
-      <DisplayGrid
-        elementos={usuariosFiltrados}
-        onElementPress={onPress}
-        />
-    </View>
-  );
-};
-
+return (
+  <View style={styles.container}>
+    <DisplayGrid
+      elementos={usuariosFiltrados} // Envía los usuarios reformateados
+      onPress={onPress}
+    />
+  </View>
+);
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
