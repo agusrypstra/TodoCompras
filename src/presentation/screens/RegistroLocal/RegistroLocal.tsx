@@ -26,7 +26,6 @@ interface OpcionPicker {
 
 
 const RegistroLocal: React.FC = () => {
-  const [nombreApellido, setNombreApellido] = useState<string>('');
   const [nombreComercial, setNombreComercial] = useState<string>('');
   const [numeroContacto, setNumeroContacto] = useState<string>('');
   const [numeroWhatsapp, setNumeroWhatsapp] = useState<string>('');
@@ -50,9 +49,6 @@ const RegistroLocal: React.FC = () => {
   const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
   const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
   const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
-  const [aceptoTerminos, setAceptoTerminos] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  
 
   useEffect(() => {
     axios.get<{ provincias: Provincia[] }>('https://apis.datos.gob.ar/georef/api/provincias')
@@ -100,10 +96,6 @@ const RegistroLocal: React.FC = () => {
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const validarFormulario = () => {
-    if (!nombreApellido.trim()) {
-      Alert.alert('Error', 'El nombre y apellido es obligatorio.');
-      return false;
-    }
     if (!nombreComercial.trim()) {
       Alert.alert('Error', 'El nombre comercial es obligatorio.');
       return false;
@@ -162,7 +154,6 @@ const RegistroLocal: React.FC = () => {
       : `${diaInicio} a ${diaFin}`;
 
     const formData = {
-      nombreApellido,
       nombreComercial,
       numeroContacto,
       numeroWhatsapp,
@@ -196,7 +187,6 @@ const RegistroLocal: React.FC = () => {
         <Text style={styles.title}>¡Registra tu negocio!</Text>
 
         {/* <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/> */}
-        <CustomTextInput value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/>
         <CustomTextInput value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *"/>
         <CustomTextInput value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *"/>
 
@@ -213,12 +203,9 @@ const RegistroLocal: React.FC = () => {
   
         <CustomPicker items={categoriasDisponibles} selectedValue={''} onValueChange={setCategoria} placeholder={'Categoria'}
         />
-        <>
-          <Text style={styles.label}>Descripcion</Text>
-          <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
-        </>
-        <Text style={styles.label}>Servicio 24 horas</Text>
+        <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
         <View style={styles.switchContainer}>
+        <Text style={styles.label}>Servicio 24 horas</Text>
           <Switch
             value={servicio24Horas}
             onValueChange={(value) => setServicio24Horas(value)}
@@ -276,28 +263,28 @@ const RegistroLocal: React.FC = () => {
             </View>
           </>
         )}
-        <View style={styles.redesContainer}>
           <Text style={styles.label}>Redes Sociales</Text>
+        <View style={styles.redesContainer}>
           <CustomCheckboxComponent
             label='Instagram'
-            enabled={instagramHabilitado} 
-            setEnabled={setInstagramHabilitado} 
+            selected={instagramHabilitado} 
+            setSelected={setInstagramHabilitado} 
             value={instagram}
             setValue={setInstagram} 
             placeholder="Ejemplo: https://www.instagram.com/tuusuario"
           /> 
           <CustomCheckboxComponent
             label='Facebook'
-            enabled={facebookHabilitado} 
-            setEnabled={setFacebookHabilitado} 
+            selected={facebookHabilitado} 
+            setSelected={setFacebookHabilitado} 
             value={facebook}
             setValue={setFacebook} 
             placeholder="Ejemplo: https://www.facebook.com/tuusuario"
           /> 
           <CustomCheckboxComponent
             label='Webpage'
-            enabled={webpageHabilitado} 
-            setEnabled={setWebpageHabilitado} 
+            selected={webpageHabilitado} 
+            setSelected={setWebpageHabilitado} 
             value={webpage}
             setValue={setWebpage} 
             placeholder="Ejemplo: https://www.tupaginaweb.com/"
@@ -339,12 +326,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 10,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginLeft: '10%',
+    textAlign: 'center',
   },
   input: {
     width: '80%',
-    
     marginBottom: 15,
     paddingVertical: 15,
     backgroundColor: '#fff',
@@ -451,7 +438,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#FFF',
     height: 100,
     color: '#000',
-    padding: 5,
+    padding: 25,
     width: '100%'
   },
   uploadButton: {
