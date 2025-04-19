@@ -1,73 +1,93 @@
-import React from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
-import { Checkbox } from 'react-native-paper'
+import React from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-interface CustomCheckboxProps{
-    label: string;
-    enabled: boolean;
-    setEnabled: (value: boolean)=>void;
-    value?:string;
-    setValue?:(value:string)=>void;
-    placeholder?:string;
+interface CustomSelectableProps {
+  label: string;
+  selected: boolean;
+  setSelected: (value: boolean) => void;
+  value?: string;
+  setValue?: (value: string) => void;
+  placeholder?: string;
 }
 
-export const CustomCheckboxComponent: React.FC<CustomCheckboxProps> = (
-    {
-        label,
-        enabled,
-        setEnabled,
-        value,
-        setValue,
-        placeholder,
-      }
-) => {
+export const CustomCheckboxComponent: React.FC<CustomSelectableProps> = ({
+  label,
+  selected,
+  setSelected,
+  value = "",
+  setValue = () => {},
+  placeholder = "",
+}) => {
   return (
-    <>
-    <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={enabled ? 'checked' : 'unchecked'}
-              onPress={() => setEnabled(!enabled)}
-            />
-            <Text style={styles.checkboxLabel}>{label}</Text>
-          </View>
-          {enabled && (
-            <>
-            <TextInput
-              style={styles.input}
-              value={value}
-              onChangeText={setValue}
-              placeholder={placeholder}
-            />
-            {/* <Text style={styles.helperText}>{placeholder}</Text> */}
+    <View style={styles.container}>
+      {/* Checkbox + Label */}
+      <TouchableOpacity
+        style={[styles.selectableBox, selected && styles.selected]}
+        onPress={() => setSelected(!selected)}
+      >
+        <Text style={[styles.selectableText, selected && styles.selectedText]}>
+          {selected ? "✓" : ""}
+        </Text>
+      </TouchableOpacity>
 
-            </>
-          )}
-    </>
-  )
-}
+      <Text style={styles.label}>{label}</Text>
+
+      {/* Input habilitado/deshabilitado */}
+      <TextInput
+        style={[styles.input, !selected && styles.disabledInput]}
+        value={value}
+        onChangeText={setValue}
+        placeholder={placeholder}
+        editable={selected}
+      />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-    checkboxLabel: {
-        marginLeft: 8,
-        fontSize: 16,
-      },
-      input: {
-        width: '80%',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 10,
-        marginBottom: 15,
-        backgroundColor: '#fff',
-        textAlign: 'center',
-      },
-      checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-      },
-      helperText:{
-        fontSize: 15,
-        marginBottom: 10
-      },
-    })
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
+  selectableBox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selected: {
+    backgroundColor: "#007bff",
+    borderColor: "#005bb5",
+  },
+  selectableText: {
+    fontSize: 16,
+    color: "transparent",
+  },
+  selectedText: {
+    color: "white",
+  },
+  label: {
+    fontSize: 16,
+    color: "#333",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    textAlign: "center",
+    padding: 10,
+  },
+  disabledInput: {
+    backgroundColor: "#f0f0f0",
+    color: "#999",
+  },
+});
 
-export default CustomCheckboxComponent
+export default CustomCheckboxComponent;

@@ -8,7 +8,7 @@ interface ElementItemProps {
   onPress: () => void;
 }
 
-const ElementItem: React.FC<ElementItemProps> = ({id, nombre, imagen, onPress }) => {
+const ElementItem: React.FC<ElementItemProps> = ({nombre, imagen,onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageContainer}>

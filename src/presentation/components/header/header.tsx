@@ -1,14 +1,16 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { RootStackParamList } from 'src/presentation/routes/StackNavigator';
 
 const screenWidth = Dimensions.get('window').width; // Obtiene el ancho de la pantalla
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const menuPosition = useSharedValue(-screenWidth); // Inicia fuera de la pantalla
-
+  const navigation = useNavigation<RootStackParamList>();
   const toggleMenu = () => {
     menuVisible ? (menuPosition.value = withTiming(-screenWidth)) : (menuPosition.value = withTiming(0));
     setMenuVisible(!menuVisible);
@@ -46,7 +48,10 @@ export const Header = () => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Inicio</Text>
+          <Text style={styles.menuText} onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Home')
+            }}>Inicio</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText}>Perfil</Text>
@@ -95,6 +100,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 2 },
     elevation: 10,
+    zIndex:999
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
   },
   menuText: {
-    fontSize: 18,
+    fontSize: 22,
   },
 });
 

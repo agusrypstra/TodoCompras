@@ -19,11 +19,11 @@ const BannerCategory: React.FC<BannerCategoryProps> = ({ handlePress, id, nombre
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    margin: 10,
+
   },
   image: {
-    width: 350, // Ajusta el tamaño según tus necesidades
-    height: 220, // Ajusta el tamaño según tus necesidades
+    width: '70%', // Ajusta el tamaño según tus necesidades
+    height: '100%', // Ajusta el tamaño según tus necesidades
     borderRadius: 10, // Bordes redondeados
   },
   textContainer: {

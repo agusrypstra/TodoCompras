@@ -5,27 +5,30 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
-import { Checkbox } from "react-native-paper";
 
 interface SubmitButtonProps {
   onPress: () => void;
   disabled?: boolean;
 }
 
-const SubmitButton: React.FC<SubmitButtonProps> = ({ onPress, disabled }) => {
+const CustomSubmit: React.FC<SubmitButtonProps> = ({ onPress, disabled }) => {
   const [aceptoTerminos, setAceptoTerminos] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
-      {/* Checkbox de términos */}
-      <View style={styles.checkboxContainer}>
-        <Checkbox.Android
-          status={aceptoTerminos ? "checked" : "unchecked"}
+      <View style={styles.flexRow}>
+      {/* Selector de términos */}
+        <TouchableOpacity
+          style={[styles.selectableBox, aceptoTerminos && styles.selected]}
           onPress={() => setAceptoTerminos(!aceptoTerminos)}
-        />
+        >
+          <Text style={[styles.selectableText, aceptoTerminos && styles.selectedText]}>
+            {aceptoTerminos ? "✓" : ""} 
+          </Text>
+        </TouchableOpacity>
         <Text style={styles.checkboxLabel}>
           Acepto los{" "}
           <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -36,10 +39,10 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ onPress, disabled }) => {
 
       {/* Botón de enviar */}
       <TouchableOpacity
-        disabled={!aceptoTerminos || disabled} // Se deshabilita si no acepta los términos
+        disabled={!aceptoTerminos || disabled}
         style={[
           styles.submitButton,
-          (!aceptoTerminos || disabled) && styles.disabledButton
+          (!aceptoTerminos || disabled) && styles.disabledButton,
         ]}
         onPress={onPress}
       >
@@ -78,69 +81,93 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ onPress, disabled }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginTop: 20
+    marginTop: 20,
+    display:'flex',
+    flexDirection:'column'
   },
-  checkboxContainer: {
-    flexDirection: "row",
+  flexRow:{
+    display:'flex',
+    flexDirection:'row',
+    alignItems:'center'
+  },
+  selectableBox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10
+    marginRight: 10,
+  },
+  selected: {
+    backgroundColor: "#007bff",
+    borderColor: "#005bb5",
+  },
+  selectableText: {
+    fontSize: 16,
+    color: "transparent",
+  },
+  selectedText: {
+    color: "white",
   },
   checkboxLabel: {
     fontSize: 14,
-    marginLeft: 5
+    marginLeft: 5,
   },
   linkText: {
     color: "blue",
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
   },
   submitButton: {
     backgroundColor: "#007bff",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5
+    borderRadius: 5,
+    marginTop: 10,
   },
   disabledButton: {
-    backgroundColor: "#cccccc"
+    backgroundColor: "#cccccc",
   },
   buttonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)"
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    width: "80%"
+    width: "80%",
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10
+    marginBottom: 10,
   },
   modalScroll: {
-    maxHeight: 200
+    maxHeight: 200,
   },
   modalText: {
-    fontSize: 14
+    fontSize: 14,
   },
   closeButton: {
     backgroundColor: "#007bff",
     padding: 10,
     marginTop: 10,
     borderRadius: 5,
-    alignItems: "center"
+    alignItems: "center",
   },
   closeButtonText: {
     color: "white",
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
-export default SubmitButton;
+export default CustomSubmit;

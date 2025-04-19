@@ -1,19 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ElementItem from './CategoriaItem';
+import { gridElement } from 'src/presentation/api/data';
 
-interface Elemento {
-  id: number;
-  nombre: string;
-  imagen: any; // Cambia a ImageSourcePropType si usas imágenes locales
+interface DisplayGridProps<T extends gridElement> {
+  elementos: T[];
+  onPress: (id: number) => void;
 }
 
-interface DisplayGridProps {
-  elementos: Elemento[];
-  onElementPress: (id: number) => void;
-}
-
-const DisplayGrid: React.FC<DisplayGridProps> = ({ elementos, onElementPress }) => {
+const DisplayGrid = <T extends gridElement>({
+  elementos,
+  onPress,
+}: DisplayGridProps<T>) => {
   return (
     <View style={styles.grid}>
       {elementos.map((elemento) => (
@@ -22,12 +20,16 @@ const DisplayGrid: React.FC<DisplayGridProps> = ({ elementos, onElementPress }) 
           id={elemento.id}
           nombre={elemento.nombre}
           imagen={elemento.imagen}
-          onPress={() => onElementPress(elemento.id)}
+          onPress={() => {
+            console.log(elemento.id)
+            onPress(elemento.id)}
+          }
         />
       ))}
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   grid: {

@@ -43,6 +43,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({navigation} :LoginScree
   const registerButton = ()=>{
     navigation.navigate("Registro")
   }
+  const invitadoButton = ()=>{
+    navigation.navigate("Home")
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Iniciar Sesión</Text>
@@ -72,9 +75,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({navigation} :LoginScree
       </TouchableOpacity>
 
 
-      <TouchableOpacity onPress={registerButton} >
-        <Text style={styles.registerText}>
-          ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
+      <TouchableOpacity>
+        <Text style={styles.registerText} >
+          ¿No tienes una cuenta? <Text onPress={registerButton} style={styles.registerLink}>Regístrate</Text>
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.registerText} >
+          O ingresa como <Text onPress={invitadoButton} style={styles.registerLink}>invitado.</Text>
         </Text>
       </TouchableOpacity>
     </View>

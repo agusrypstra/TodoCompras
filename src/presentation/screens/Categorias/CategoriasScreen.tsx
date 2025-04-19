@@ -13,14 +13,13 @@ type CategoriasScreenNavigationProp = NativeStackNavigationProp<RootStackParamLi
 
 interface CategoriasScreenProps {
   route: RouteProp<RootStackParamList, 'Categorias'>;
-  navigation: CategoriasScreenNavigationProp; // Añadir navigation a las props
 }
 
 const CategoriasScreen: React.FC<CategoriasScreenProps> = ({ route }) => {
   const { id, subcategorias } = route.params; // Recibir subcategorías como parámetro
   const navigation = useNavigation<CategoriasScreenNavigationProp>(); // Obtener el objeto navigation con el tipo correcto
 
-  const handleSubcategoriaPress = (id: number) => {
+  const onPress = (id: number) => {
     // Navegar a la pantalla de perfiles con el id de la subcategoría
     navigation.navigate('Perfiles', { subcategoriaId: id });
   };
@@ -32,7 +31,7 @@ const CategoriasScreen: React.FC<CategoriasScreenProps> = ({ route }) => {
         {subcategorias && ( // Verificar si subcategorías está definido
           <DisplayGrid
             elementos={subcategorias} // Mostrar las subcategorías recibidas
-            onElementPress={handleSubcategoriaPress}
+            onPress={onPress}
           />
         )}
       </View>
