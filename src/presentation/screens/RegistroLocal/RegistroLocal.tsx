@@ -24,13 +24,29 @@ interface OpcionPicker {
   value: string;
 }
 
+type Categoria = {
+  id: number;
+  nombre: string;
+};
+
 
 const RegistroLocal: React.FC = () => {
+  const user_id = 1;
   const [nombreComercial, setNombreComercial] = useState<string>('');
   const [numeroContacto, setNumeroContacto] = useState<string>('');
   const [numeroWhatsapp, setNumeroWhatsapp] = useState<string>('');
-  const [tipoPerfil, setTipoPerfil] = useState<string>('Emprendimiento');
-  const [categoria, setCategoria] = useState<string>('');
+  const [descripcion, setDescripcion] = useState<string>('');
+  const [direccion, setDireccion] = useState<string>('');
+  const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
+  const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
+  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
+  const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
+  const [ubicacionGoogleMaps, setUbicacion] = useState("");
+
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState<OpcionPicker[]>([]);
+  const [categoriaPadreSeleccionada, setCategoriaPadreSeleccionada] = useState("");
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
+  
   const [horaInicio, setHoraInicio] = useState<string>('08');
   const [minutoInicio, setMinutoInicio] = useState<string>('00');
   const [horaFin, setHoraFin] = useState<string>('16');
@@ -38,19 +54,19 @@ const RegistroLocal: React.FC = () => {
   const [diaInicio, setDiaInicio] = useState<string>('Lunes');
   const [diaFin, setDiaFin] = useState<string>('Viernes');
   const [servicio24Horas, setServicio24Horas] = useState<boolean>(false);
+  
   const [instagramHabilitado, setInstagramHabilitado] = useState<boolean>(false);
   const [instagram, setInstagram] = useState<string>('');
   const [facebookHabilitado, setFacebookHabilitado] = useState<boolean>(false);
   const [facebook, setFacebook] = useState<string>('');
   const [webpageHabilitado, setWebpageHabilitado] = useState<boolean>(false);
   const [webpage, setWebpage] = useState<string>('');
-  const [descripcion, setDescripcion] = useState<string>('');
-  const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
-  const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
-  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
-  const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
+  const [fotoPerfil, setFotoPerfil] = useState("");
+  const [fotoBanner, setFotoBanner] = useState("");
 
   useEffect(() => {
+    // Cargar provincias al iniciar el componente
+
     axios.get<{ provincias: Provincia[] }>('https://apis.datos.gob.ar/georef/api/provincias')
       .then(response => {
         const provinciasData = response.data.provincias
@@ -63,9 +79,22 @@ const RegistroLocal: React.FC = () => {
         setProvincias(provinciasData);
       })
       .catch(error => {
-        // Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
+        Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
       });
+
+      axios.get('http://10.0.2.2:8080/api/categorias/padres')
+      .then(res => {
+      const opciones = res.data.map((categoria: { nombre: string; id: number; }) => ({
+        label: categoria.nombre,
+        value: categoria.id,
+      }));
+      setCategoriasDisponibles(opciones);
+    })
+    .catch(err => console.error(err));
+
   }, []);
+
+
   
   useEffect(() => {
     if (provinciaSeleccionada) {
@@ -86,6 +115,25 @@ const RegistroLocal: React.FC = () => {
     }
   }, [provinciaSeleccionada]);
   
+  useEffect(() => {
+    if (categoriaPadreSeleccionada) {
+      axios.get<Categoria[]>(`http://10.0.2.2:8080/api/categorias/${categoriaPadreSeleccionada}`)
+        .then(response => {
+          const categoriasData: OpcionPicker[] = response.data
+          .map((cat) => ({
+            label: cat.nombre,
+            value: String(cat.id)  // 👈 acá la magia
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label));
+
+        setCategoriasDisponibles(categoriasData);
+        })
+        .catch(error => {
+    Alert.alert('Error', 'No se pudieron cargar las categorías.' + error);
+  });
+    }
+  }, [categoriaPadreSeleccionada]);
+  
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const validarFormulario = () => {
@@ -101,7 +149,7 @@ const RegistroLocal: React.FC = () => {
       Alert.alert('Error', 'El número de WhatsApp debe contener solo números.');
       return false;
     }
-    if (!categoria.trim()) {
+    if (!categoriaSeleccionada.trim()) {
       Alert.alert('Error', 'La categoría es obligatoria.');
       return false;
     }
@@ -129,7 +177,6 @@ const RegistroLocal: React.FC = () => {
       Alert.alert('Error', 'El campo de Página Web es obligatorio.');
       return false;
     }
-
     return true;
   };
 
@@ -147,17 +194,26 @@ const RegistroLocal: React.FC = () => {
       : `${diaInicio} a ${diaFin}`;
 
     const formData = {
-      nombreComercial,
-      numeroContacto,
-      numeroWhatsapp,
-      tipoPerfil,
-      categoria,
-      horarioAtencion,
-      diasAtencion,
-      instagram: instagramHabilitado ? instagram : null,
-      facebook: facebookHabilitado ? facebook : null,
-      webpage: webpageHabilitado ? webpage : null,
-      descripcion,
+        "usuarioId": 1,
+        "categoriaId":categoriaSeleccionada,
+        "nombre": nombreComercial,
+        "provincia": provinciaSeleccionada,
+        "localidad": localidadSeleccionada,
+        "direccion": direccion,
+        "telefonoLlamadas": numeroContacto,
+        "telefonoWhatsapp": numeroWhatsapp,
+        "descripcion": descripcion ? descripcion : null,
+        "diasAtencionDesde": diaInicio,
+        "diasAtencionHasta": diaFin,
+        "horarioAtencionDesde": horaInicio,
+        "horarioAtencionHasta": horaFin,
+        "es24Horas": servicio24Horas,
+        "ubicacionGoogleMaps": ubicacionGoogleMaps ? ubicacionGoogleMaps : null,
+        "linkInstagram": instagramHabilitado ? instagram : null,
+        "linkFacebook": facebookHabilitado ? facebook : null,
+        "linkPaginaWeb": webpageHabilitado ? webpage : null,
+        "fotoPerfil": fotoPerfil,
+        "fotoBanner": fotoBanner
     };
     console.log('Datos del formulario:', formData);
     Alert.alert('Éxito', 'Formulario enviado correctamente.');
@@ -182,6 +238,7 @@ const RegistroLocal: React.FC = () => {
         {/* <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/> */}
         <CustomTextInput value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *"/>
         <CustomTextInput value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *"/>
+        <CustomTextInput value={direccion} onChangeText={setDireccion} placeholder="Direccion" />
 
         <CustomTextInput value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp" keyboardType="phone-pad"/>
 
@@ -194,7 +251,10 @@ const RegistroLocal: React.FC = () => {
 
 
   
-        <CustomPicker items={categoriasDisponibles} selectedValue={''} onValueChange={setCategoria} placeholder={'Categoria'}
+        <CustomPicker items={categoriasDisponibles} selectedValue={''} onValueChange={setCategoriaPadreSeleccionada} placeholder={'Categoria'}
+
+
+
         />
         <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
         <View style={styles.switchContainer}>
