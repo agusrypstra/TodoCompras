@@ -86,13 +86,6 @@ const RegistroLocal: React.FC = () => {
     }
   }, [provinciaSeleccionada]);
   
-
-  const categoriasDisponibles = [
-    { label: 'Emprendimiento', value: 'emprendimiento' },
-      { label: 'Local', value: 'local' },
-      { label: 'Oficio', value: 'oficio' }
-  ]
-
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const validarFormulario = () => {
