@@ -20,7 +20,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={styles.container}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
       {categorias.map((categoria) => (
         <View key={categoria.id}>
           <BannerCategory
@@ -31,22 +32,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         />
         </View>
       ))}
+      </View>
     </ScrollView>
-  );
+  )
 };
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    gap: 50,
+  scrollContainer: {
+    flexGrow: 1, // Permite que el contenido crezca y se centre
   },
-  sectionsContainer: {
-    width: '100%',
-    height: '100%',
-    flexDirection: 'column',
-    gap: 40,
-    marginVertical: 100,
+  container: {
+    width: "100%", // Opcional: Controla el ancho del contenido
+    padding: 20,
+    gap: 30,
   },
 });
+
 
 export default HomeScreen;
