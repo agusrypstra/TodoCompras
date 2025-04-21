@@ -7,6 +7,7 @@ import HomeScreen from '../screens/Home/HomeScreen';
 import CategoriasScreen from '../screens/Categorias/CategoriasScreen';
 import PerfilesScreen from '../screens/Categorias/PerfilesScreen';
 import PerfilScreen from '../screens/Perfil/PerfilScreen';
+import SolicitudesScreen from '../screens/Solicitudes/SolicitudesScreen';
 
 // Definir los tipos de las rutas
 
@@ -16,8 +17,7 @@ export type RootStackParamList = {
   Registro: undefined;
   Home: undefined;
   Categorias: { id: number; subcategorias?: any[] };
-  Perfiles: { subcategoriaId: number };
-  Perfil: {perfilId: number};
+  Perfiles: { subcategoriaId: number }; // Definir la pantalla Perfiles y sus parámetros
 };
 
 // Crear el Stack Navigator
@@ -25,14 +25,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
 
 const StackNavigator = () => {
-  return (
-    <Stack.Navigator initialRouteName='Registro' screenOptions={{ headerShown: false }}>
+  return (  
+    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }} >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Registro" component={RegistroLocal} />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Categorias" component={CategoriasScreen} />
       <Stack.Screen name="Perfiles" component={PerfilesScreen} />
-      <Stack.Screen name="Perfil" component={PerfilScreen} />
     </Stack.Navigator>
   );
 };
