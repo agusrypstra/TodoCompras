@@ -12,7 +12,7 @@ export const categorias = [{
 }
 ,{
   id:3,
-  nombre:'Profesionales',
+  nombre:'Oficios',
   imagen: banners.profesionales
 }
 ]
