@@ -50,15 +50,32 @@ export const Header: React.FC = () => {
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText} onPress={()=>{
             toggleMenu()
-            navigation.navigate('Home')
+            navigation.navigate('Home', { perfilId: 123 });
             }}>Inicio</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText} onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Solicitudes', { perfilId: 123 });
+            }}>Solicitudes</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText} onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Registro', { perfilId: 123 });
+            }}>Registro</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText}>Perfil</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText}>Configuración</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.menuText}>Cerrar sesión</Text>
         </TouchableOpacity>
