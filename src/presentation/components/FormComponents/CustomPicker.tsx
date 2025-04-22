@@ -2,36 +2,42 @@ import React from 'react'
 import { Picker } from '@react-native-picker/picker';
 import { StyleSheet, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-interface PickerItem {
-    label: string;
-    value: string;
-  }
+import { OpcionPicker } from 'src/presentation/screens/RegistroLocal/RegistroLocal';
 
 interface pickerParams {
-    selectedValue: string;
-    onValueChange: (value: string) => void;
-    items: PickerItem[];
-    placeholder: string;
+  selectedValue: string;
+  onValueChange: (value: string) => void;
+  items: OpcionPicker[];
+  placeholder: string;
+  loading?: boolean;
 }
 
-const CustomPicker: React.FC<pickerParams> = ({ selectedValue, onValueChange, items, placeholder }) => {
-    return (
-        <View style={styles.pickerContainer}>
-            <Picker
-            selectedValue={selectedValue}
-            onValueChange={onValueChange}
-            style={styles.picker}
-            >
-            <Picker.Item label={placeholder} value="" color="#999" />
-            {items.map((item, index) => (
-                <Picker.Item key={index} label={item.label} value={item.value} color="#999"/>
-            ))}
-            </Picker>
-        <Ionicons name="chevron-down" size={20} color="#333" style={styles.icon} />
-      </View>
-    );
-  };
+const CustomPicker: React.FC<pickerParams> = ({ selectedValue, onValueChange, items, placeholder, loading = false }) => {
+  const isDisabled = loading || items.length === 0;
+
+  return (
+    <View style={[styles.pickerContainer, isDisabled && styles.pickerDisabled]}>
+      <Picker
+        selectedValue={selectedValue}
+        onValueChange={onValueChange}
+        enabled={!isDisabled}
+        style={styles.picker}
+      >
+        <Picker.Item
+          label={loading ? 'Cargando...' : placeholder}
+          value=""
+          color="#999"
+        />
+        {!loading &&
+          items.map((item, index) => (
+            <Picker.Item key={index} label={item.label} value={item.value} color="#333" />
+          ))}
+      </Picker>
+      <Ionicons name="chevron-down" size={20} color="#333" style={styles.icon} />
+    </View>
+  );
+};
+
 
   const styles = StyleSheet.create({
     pickerContainer: {
@@ -52,6 +58,9 @@ const CustomPicker: React.FC<pickerParams> = ({ selectedValue, onValueChange, it
       position: "absolute",
       right: 10, // Posiciona el icono a la derecha
     },
+    pickerDisabled: {
+      backgroundColor: '#f2f2f2',
+    }
   });
 
 export default CustomPicker
