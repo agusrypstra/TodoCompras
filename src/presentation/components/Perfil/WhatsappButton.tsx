@@ -7,7 +7,7 @@ interface WhatsAppButtonProps {
   message?: string;
 }
 
-const  WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ phoneNumber, message }) => {
+const  WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ phoneNumber, message = "Vi tu publicacion en TodoCompras, me interesaria conocer más!"  }) => {
     const handleWhatsAppPress = () => {
         console.log("object")
         const url = `https://wa.me/${phoneNumber}?text=${message}`;

@@ -1,26 +1,59 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/Home/HomeScreen.tsx'
-import AboutScreen from '../screens/About/AboutScreen.tsx';
-import MerchantsScreen from '../screens/Merchants/MerchantsScreen.tsx';
-import RestaurantsScreen from '../screens/Restaurants/RestaurantsScreen.tsx';
-import { RestaurantScreen } from '../screens/Restaurants/RestaurantScreen.tsx';
-import { RootStackParams } from '../interfaces/RootStackParams.tsx';
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { LoginScreen } from '../screens/Login/LoginScreen';
+import RegistroLocal from '../screens/RegistroLocal/RegistroLocal';
+import HomeScreen from '../screens/Home/HomeScreen';
+import CategoriasScreen from '../screens/Categorias/CategoriasScreen';
+import PerfilesScreen from '../screens/Categorias/PerfilesScreen';
+import SolicitudesScreen from '../screens/Solicitudes/SolicitudesScreen';
 
+// Definir los tipos de las rutas
 
+export type RootStackParamList = {
+  navigate(arg0: string, arg1: { perfilId: number; }): unknown;
+  Login: undefined;
+  Registro: undefined;
+  Home: undefined;
+  Categorias: { id: number; subcategorias?: any[] };
+  Perfiles: { subcategoriaId: number }; // Definir la pantalla Perfiles y sus parámetros
+  Solicitudes: any; // Definir la pantalla Perfiles y sus parámetros
+};
 
-const Stack = createStackNavigator<RootStackParams>();
+// Crear el Stack Navigator
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const Drawer = createDrawerNavigator();
 
-export const MyStack = ()=> {
-    return (
-      <Stack.Navigator screenOptions={{
-        headerShown: false
-      }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="Merchants" component={MerchantsScreen} />
-        <Stack.Screen name="Restaurants" component={RestaurantsScreen} />
-        <Stack.Screen name="Restaurant" component={RestaurantScreen} />
-      </Stack.Navigator>
-    );
-}
-export default MyStack;
+const StackNavigator = () => {
+  return (  
+    <Stack.Navigator initialRouteName="Solicitudes" screenOptions={{ headerShown: false }} >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Registro" component={RegistroLocal} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Categorias" component={CategoriasScreen} />
+      <Stack.Screen name="Perfiles" component={PerfilesScreen} />
+      <Stack.Screen name="Solicitudes" component={SolicitudesScreen} />
+    </Stack.Navigator>
+  );
+};
+
+// **Drawer Navigator que envuelve el Stack**
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        drawerStyle: {
+          width: '75%', // 🔥 Ancho del drawer
+        },
+      }}
+    >
+      <Drawer.Screen
+        name="Main"
+        component={StackNavigator}
+        options={{ headerShown: false }}
+      />
+    </Drawer.Navigator>
+  );
+};
+
+export default DrawerNavigator;

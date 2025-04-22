@@ -3,31 +3,42 @@ import { View, TextInput, Text, StyleSheet, ScrollView, Alert, TouchableOpacity,
 import { Checkbox, Icon } from 'react-native-paper'; // Importamos Checkbox de react-native-paper
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import {CustomCheckboxComponent} from '../../components/FormComponents/CustomCheckboxComponent';
+import CustomTextInput from '../../components/FormComponents/CustomTextInput';
+import CustomSubmit from '../../components/FormComponents/CustomSubmit';
+import CustomPicker from '../../../presentation/components/FormComponents/CustomPicker';
+import { categorias } from 'src/presentation/api/data';
 // import RNPickerSelect from 'react-native-picker-select'; 
 
-interface Provincia {
-  id: string;
-  nombre: string;
-}
-
-interface Localidad {
-  id: string;
-  nombre: string;
-}
-
-interface OpcionPicker {
+export interface OpcionPicker {
   label: string;
   value: string;
 }
 
 
-const RegisterForm: React.FC = () => {
-  const [nombreApellido, setNombreApellido] = useState<string>('');
+
+
+const RegistroLocal: React.FC = () => {
+  const user_id = 1;
   const [nombreComercial, setNombreComercial] = useState<string>('');
   const [numeroContacto, setNumeroContacto] = useState<string>('');
   const [numeroWhatsapp, setNumeroWhatsapp] = useState<string>('');
-  const [tipoPerfil, setTipoPerfil] = useState<string>('Emprendimiento');
-  const [categoria, setCategoria] = useState<string>('');
+  const [descripcion, setDescripcion] = useState<string>('');
+  const [direccion, setDireccion] = useState<string>('');
+  const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
+  const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
+  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
+  const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
+  const [ubicacionGoogleMaps, setUbicacion] = useState("");
+  const [loadingProvincias, setLoadingProvincias] = useState(true);
+  const [loadingLocalidades, setLoadingLocalidades] = useState(true);
+
+  const [categoriaPadreSeleccionada, setCategoriaPadreSeleccionada] = useState('');
+  
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState<OpcionPicker[]>([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [loadingCategoriasDisponibles, setLoadingCategoriasDisponibles] = useState(true);
+  
   const [horaInicio, setHoraInicio] = useState<string>('08');
   const [minutoInicio, setMinutoInicio] = useState<string>('00');
   const [horaFin, setHoraFin] = useState<string>('16');
@@ -35,71 +46,86 @@ const RegisterForm: React.FC = () => {
   const [diaInicio, setDiaInicio] = useState<string>('Lunes');
   const [diaFin, setDiaFin] = useState<string>('Viernes');
   const [servicio24Horas, setServicio24Horas] = useState<boolean>(false);
+  
   const [instagramHabilitado, setInstagramHabilitado] = useState<boolean>(false);
   const [instagram, setInstagram] = useState<string>('');
   const [facebookHabilitado, setFacebookHabilitado] = useState<boolean>(false);
   const [facebook, setFacebook] = useState<string>('');
   const [webpageHabilitado, setWebpageHabilitado] = useState<boolean>(false);
   const [webpage, setWebpage] = useState<string>('');
-  const [descripcion, setDescripcion] = useState<string>('');
-  const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
-  const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
-  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState('');
-  const [localidadSeleccionada, setLocalidadSeleccionada] = useState('');
-  const [aceptoTerminos, setAceptoTerminos] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  
+  const [fotoPerfil, setFotoPerfil] = useState("");
+  const [fotoBanner, setFotoBanner] = useState("");
 
   useEffect(() => {
-    axios.get<{ provincias: Provincia[] }>('https://apis.datos.gob.ar/georef/api/provincias')
-      .then(response => {
-        const provinciasData = response.data.provincias
-          .map((prov: Provincia) => ({
-            label: prov.nombre,
-            value: prov.id
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar alfabéticamente
-  
-        setProvincias(provinciasData);
-      })
-      .catch(error => {
-        // Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
-      });
+    axios
+    .get('https://apis.datos.gob.ar/georef/api/provincias')
+    .then(response => {
+      const provinciasData = response.data.provincias
+        .map((prov: { nombre: string }) => ({
+          label: prov.nombre,
+          value: prov.nombre,
+        }))
+        .sort((a: { label: string; }, b: { label: string; }) => a.label.localeCompare(b.label));
+      setProvincias(provinciasData);
+    })
+    .catch(error => {
+      Alert.alert('Error', 'No se pudieron cargar las provincias. Código: ' + error);
+    })
+    .finally(() => setLoadingProvincias(false));
   }, []);
   
   useEffect(() => {
     if (provinciaSeleccionada) {
-      axios.get<{ localidades: Localidad[] }>(`https://apis.datos.gob.ar/georef/api/localidades?provincia=${provinciaSeleccionada}&campos=id,nombre&max=5000`)
+      setLoadingLocalidades(true);
+      setLocalidades([]); // Limpia localidades previas al seleccionar nueva provincia
+  
+      axios
+        .get(`https://apis.datos.gob.ar/georef/api/localidades?provincia=${provinciaSeleccionada}&campos=id,nombre&max=5000`)
         .then(response => {
           const localidadesData = response.data.localidades
-            .map((loc: Localidad) => ({
+            .map((loc: { nombre: string }) => ({
               label: loc.nombre,
-              value: loc.id
+              value: loc.nombre,
             }))
-            .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar alfabéticamente
+            .sort((a: { label: string; }, b: { label: string; }) => a.label.localeCompare(b.label));
   
           setLocalidades(localidadesData);
         })
         .catch(error => {
-          Alert.alert('Error', 'No se pudieron cargar las localidades.');
-        });
+          Alert.alert('Error', 'No se pudieron cargar las localidades.\nCódigo: ' + error);
+        })
+        .finally(() => setLoadingLocalidades(false));
     }
   }, [provinciaSeleccionada]);
   
+  
+  const categoriasPadre: OpcionPicker[] = [
+    { label: "Local", value: "1" },
+    { label: "Emprendimiento", value: "2" },
+    { label: "Oficio", value: "3" }
+  ];
 
-  const categoriasDisponibles: { [key: string]: string[] } = {
-    Emprendimiento: ['Artesanías', 'Repostería', 'Ropa', 'Accesorios'],
-    Local: ['Restaurante', 'Tienda de ropa', 'Ferretería', 'Supermercado'],
-    Oficio: ['Electricista', 'Plomero', 'Carpintero', 'Mecánico'],
-  };
-
+  useEffect(() => {
+    if (categoriaPadreSeleccionada != '') {
+      axios.get(`http://10.0.2.2:8080/api/subcategorias/${categoriaPadreSeleccionada}`)
+        .then(response => {
+          const categoriasData: OpcionPicker[] = response.data.map((cat: { nombre: string; id: number }) => ({
+            label: cat.nombre,
+            value: cat.id,
+          }));
+  
+          setCategoriasDisponibles(categoriasData);
+        })
+        .catch(error => {
+          Alert.alert('Error', 'No se pudieron cargar las categorías. ' + error);
+        });
+    }
+  }, [categoriaPadreSeleccionada]);
+  
+  
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const validarFormulario = () => {
-    if (!nombreApellido.trim()) {
-      Alert.alert('Error', 'El nombre y apellido es obligatorio.');
-      return false;
-    }
     if (!nombreComercial.trim()) {
       Alert.alert('Error', 'El nombre comercial es obligatorio.');
       return false;
@@ -112,7 +138,7 @@ const RegisterForm: React.FC = () => {
       Alert.alert('Error', 'El número de WhatsApp debe contener solo números.');
       return false;
     }
-    if (!categoria.trim()) {
+    if (!categoriaSeleccionada.trim()) {
       Alert.alert('Error', 'La categoría es obligatoria.');
       return false;
     }
@@ -140,11 +166,10 @@ const RegisterForm: React.FC = () => {
       Alert.alert('Error', 'El campo de Página Web es obligatorio.');
       return false;
     }
-
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validarFormulario()) {
       return;
     }
@@ -158,21 +183,40 @@ const RegisterForm: React.FC = () => {
       : `${diaInicio} a ${diaFin}`;
 
     const formData = {
-      nombreApellido,
-      nombreComercial,
-      numeroContacto,
-      numeroWhatsapp,
-      tipoPerfil,
-      categoria,
-      horarioAtencion,
-      diasAtencion,
-      instagram: instagramHabilitado ? instagram : null,
-      facebook: facebookHabilitado ? facebook : null,
-      webpage: webpageHabilitado ? webpage : null,
-      descripcion,
+        "usuarioId": 1,
+        "categoriaId":categoriaSeleccionada,
+        "nombre": nombreComercial,
+        "direccion": direccion,
+        "provincia": provinciaSeleccionada,
+        "localidad": localidadSeleccionada,
+        "telefonoLlamadas": numeroContacto,
+        "telefonoWhatsapp": numeroWhatsapp,
+        "descripcion": descripcion ? descripcion : null,
+        "diasAtencionDesde": diaInicio,
+        "diasAtencionHasta": diaFin,
+        "horarioAtencionDesde": horaInicio,
+        "horarioAtencionHasta": horaFin,
+        "es24Horas": servicio24Horas,
+        "ubicacionGoogleMaps": ubicacionGoogleMaps ? ubicacionGoogleMaps : null,
+        "linkInstagram": instagramHabilitado ? instagram : null,
+        "linkFacebook": facebookHabilitado ? facebook : null,
+        "linkPaginaWeb": webpageHabilitado ? webpage : null,
+        "fotoPerfil": fotoPerfil,
+        "fotoBanner": fotoBanner
     };
-    console.log('Datos del formulario:', formData);
-    Alert.alert('Éxito', 'Formulario enviado correctamente.');
+    console.log(JSON.stringify(formData, null, 2));
+    try {
+      const response = await axios.post('http://10.0.2.2:8080/api/solicitudes', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      Alert.alert("Éxito", "Solicitud enviada correctamente." + response.status);
+    } catch (error) {
+      Alert.alert("Error", "Hubo un problema al enviar la solicitud.");
+      console.error(error);
+    }
   };
 
   const generarOpciones = (inicio: number, fin: number) => {
@@ -189,92 +233,55 @@ const RegisterForm: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Registro</Text>
+        <Text style={styles.title}>¡Registra tu negocio!</Text>
 
-        <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *" />
-      <TextInput style={styles.input} value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *" />
-        <TextInput style={styles.input} value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *" keyboardType="phone-pad" />
-        <TextInput style={styles.input} value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp *" keyboardType="phone-pad" />
+        {/* <TextInput style={styles.input} value={nombreApellido} onChangeText={setNombreApellido} placeholder="Nombre y Apellido *"/> */}
+        <CustomTextInput value={nombreComercial} onChangeText={setNombreComercial} placeholder="Nombre Comercial *"/>
+        <CustomTextInput value={numeroContacto} onChangeText={setNumeroContacto} placeholder="Número de Contacto *"/>
+        <CustomTextInput value={direccion} onChangeText={setDireccion} placeholder="Direccion" />
 
-        {/* <View style={styles.input}>
-          <RNPickerSelect
-            onValueChange={(value) => {
-              setProvinciaSeleccionada(value);
-              setLocalidadSeleccionada(''); // Reiniciar la localidad seleccionada
-            }}
-            items={provincias}
-            placeholder={{ label: 'Seleccione una provincia', value: null }}
-            style={pickerStyles}
-          />
-        </View>
+        <CustomTextInput value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp" keyboardType="phone-pad"/>
 
-        {provinciaSeleccionada ? (
-          <View style={styles.input}>
-            <RNPickerSelect
-              onValueChange={(value) => setLocalidadSeleccionada(value)}
-              items={localidades}
-              placeholder={{ label: 'Seleccione una localidad', value: null }}
-              style={pickerStyles}
-            />
-          </View>
-        ) : null} */}
-
-
-          <Picker
-            selectedValue={provinciaSeleccionada}
-            onValueChange={(value) => {
-              setProvinciaSeleccionada(value);
-              setLocalidadSeleccionada(''); // Reiniciar la localidad seleccionada
-            }}
-            style={styles.picker}
-          >
-            <Picker.Item label="Seleccione una provincia" value={null} />
-            {provincias.map((provincia, index) => (
-              <Picker.Item key={index} label={provincia.label} value={provincia.value} />
-            ))}
-          </Picker>
-
+        <CustomPicker
+          selectedValue={provinciaSeleccionada}
+          onValueChange={setProvinciaSeleccionada}
+          items={provincias}
+          placeholder="Seleccione una provincia"
+          loading={loadingProvincias}
+        />
 
           {provinciaSeleccionada ? (
-            <>
-              <Picker
-                selectedValue={localidadSeleccionada}
-                onValueChange={(value) => setLocalidadSeleccionada(value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Seleccione una localidad" value={null} />
-                {localidades.map((localidad, index) => (
-                  <Picker.Item key={index} label={localidad.label} value={localidad.value} />
-                ))}
-              </Picker>
-            </>
+            <CustomPicker
+            selectedValue={localidadSeleccionada}
+            onValueChange={setLocalidadSeleccionada}
+            items={localidades}
+            placeholder="Seleccione una localidad"
+            loading={loadingLocalidades}
+          />
           ) : null}
 
 
 
-
-        <Text style={styles.label}>Tipo de Perfil *</Text>
-        <Picker selectedValue={tipoPerfil} onValueChange={(itemValue: string) => {
-          setTipoPerfil(itemValue);
-          setCategoria('');
-        }} style={styles.picker}>
-          <Picker.Item label="Emprendimiento" value="Emprendimiento" />
-          <Picker.Item label="Local" value="Local" />
-          <Picker.Item label="Oficio" value="Oficio" />
-        </Picker>
-
-        <Text style={styles.label}>Categoría *</Text>
-        <Picker selectedValue={categoria} onValueChange={(itemValue: string) => setCategoria(itemValue)} style={styles.picker}>
-          {categoriasDisponibles[tipoPerfil].map((cat) => (
-            <Picker.Item key={cat} label={cat} value={cat} />
-          ))}
-        </Picker>
-        <>
-          <Text style={styles.label}>Descripcion</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
-        </>
-        <Text style={styles.label}>Servicio 24 horas</Text>
+  
+        <CustomPicker
+          selectedValue={categoriaPadreSeleccionada}
+          onValueChange={setCategoriaPadreSeleccionada}
+          items={categoriasPadre}
+          placeholder="Seleccione una categoria"
+          loading={false}
+        />
+          {categoriaPadreSeleccionada ? (
+            <CustomPicker
+            selectedValue={categoriaSeleccionada}
+            onValueChange={setCategoriaSeleccionada}
+            items={categoriasDisponibles}
+            placeholder="Seleccione una categoria"
+            loading={loadingCategoriasDisponibles}
+          />
+          ) : null}
+        <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
         <View style={styles.switchContainer}>
+        <Text style={styles.label}>Servicio 24 horas</Text>
           <Switch
             value={servicio24Horas}
             onValueChange={(value) => setServicio24Horas(value)}
@@ -332,111 +339,35 @@ const RegisterForm: React.FC = () => {
             </View>
           </>
         )}
-        <View style={styles.redesContainer}>
           <Text style={styles.label}>Redes Sociales</Text>
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={instagramHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setInstagramHabilitado(!instagramHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Instagram</Text>
-          </View>
-          {instagramHabilitado && (
-            <>
-            <TextInput
-              style={styles.input}
-              value={instagram}
-              onChangeText={setInstagram}
-              placeholder="Ejemplo: https://www.instagram.com/tuusuario"
-            />
-            <Text style={styles.helperText}>Ingresa el enlace completo de tu perfil</Text>
-
-            </>
-          )}
-
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={facebookHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setFacebookHabilitado(!facebookHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Facebook</Text>
-          </View>
-          {facebookHabilitado && (
-            <>
-            <TextInput
-              style={styles.input}
-              value={facebook}
-              onChangeText={setFacebook}
-              placeholder="Ejemplo: https://www.facebook.com/tuusuario"
-            />
-                <Text style={styles.helperText}>Ingresa el enlace completo de tu perfil</Text>
-
-            </>
-          )}
-
-          <View style={styles.checkboxContainer}>
-            <Checkbox.Android
-              status={webpageHabilitado ? 'checked' : 'unchecked'}
-              onPress={() => setWebpageHabilitado(!webpageHabilitado)}
-            />
-            <Text style={styles.checkboxLabel}>Página Web</Text>
-          </View>
-          {webpageHabilitado && (
-            <TextInput
-              style={styles.input}
-              value={webpage}
-              onChangeText={setWebpage}
-              placeholder="Ejemplo: https://www.tupaginaweb.com/"
-            />
-          )}
+        <View style={styles.redesContainer}>
+          <CustomCheckboxComponent
+            label='Instagram'
+            selected={instagramHabilitado} 
+            setSelected={setInstagramHabilitado} 
+            value={instagram}
+            setValue={setInstagram} 
+            placeholder="Ejemplo: https://www.instagram.com/tuusuario"
+          /> 
+          <CustomCheckboxComponent
+            label='Facebook'
+            selected={facebookHabilitado} 
+            setSelected={setFacebookHabilitado} 
+            value={facebook}
+            setValue={setFacebook} 
+            placeholder="Ejemplo: https://www.facebook.com/tuusuario"
+          /> 
+          <CustomCheckboxComponent
+            label='Webpage'
+            selected={webpageHabilitado} 
+            setSelected={setWebpageHabilitado} 
+            value={webpage}
+            setValue={setWebpage} 
+            placeholder="Ejemplo: https://www.tupaginaweb.com/"
+          /> 
         </View>
 
-        <View style={styles.checkboxContainer}>
-      <Checkbox.Android
-        status={aceptoTerminos ? 'checked' : 'unchecked'}
-        onPress={() => setAceptoTerminos(!aceptoTerminos)}
-      />
-      <Text style={styles.checkboxLabel}>
-        Acepto los{' '}
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={styles.linkText}>términos y condiciones</Text>
-        </TouchableOpacity>
-      </Text>
-
-      {/* Modal para mostrar los términos */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Términos y Condiciones</Text>
-            <ScrollView style={styles.modalScroll}>
-              <Text style={styles.modalText}>
-                Aquí van los términos y condiciones detallados. Puedes escribir
-                todo el texto que desees.
-              </Text>
-            </ScrollView>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </View>
-
-        <TouchableOpacity
-  disabled={!aceptoTerminos} // Si no acepta los términos, deshabilitado
-  style={[styles.submitButton, !aceptoTerminos && styles.botonDeshabilitado]}
-  onPress={handleSubmit}
->
-  <Text style={styles.textoBoton}>Enviar</Text>
-</TouchableOpacity>
+        <CustomSubmit onPress={handleSubmit} />
         </View>
     </ScrollView>
   );
@@ -471,21 +402,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 10,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginLeft: '10%',
-  },
-  helperText:{
-    fontSize: 15,
-    marginBottom: 10
+    textAlign: 'center',
   },
   input: {
     width: '80%',
+    marginBottom: 15,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+  },
+  inputOnFocus:{
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
-    marginBottom: 15,
-    backgroundColor: '#fff',
-    textAlign: 'center',
   },
   pickerStyles:{
       fontSize: 16,
@@ -513,10 +444,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   picker: {
-    width: '80%',
+    width: '100%',
     height: 50,
     marginBottom: 15,
     backgroundColor: '#fff',
+    color:"#999"
   },
   hourPicker: {
     width: '30%',
@@ -579,7 +511,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textArea: {
+    backgroundColor:'#FFF',
     height: 100,
+    color: '#000',
+    padding: 25,
+    width: '100%'
   },
   uploadButton: {
     backgroundColor: '#007bff',
@@ -647,4 +583,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterForm;
+export default RegistroLocal;

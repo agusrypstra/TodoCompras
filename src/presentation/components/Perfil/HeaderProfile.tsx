@@ -32,7 +32,6 @@ const HeaderProfile: React.FC<HeaderProfileProps> = ({ background, avatar, name 
         <Text style={styles.categoryText}>Mecánico</Text>
       {redes.length > 0 ? <RedesBox redes={redes}/>  : undefined}
       </View>
-        {/* Botón que muestra un mensaje en consola */}
         <InformacionBox />
     </View>
     
