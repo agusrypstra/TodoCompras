@@ -15,7 +15,7 @@ const SolicitudesContainer: React.FC<SolicitudesContainerProps> = ({ data }) => 
                     fotoPerfil={item.fotoPerfil}
                     nombre={item.nombre}
                     descripcion={item.descripcion}
-                    categoriaId={item.categoriaId}
+                    categoria={item.categoriaNombre}
                     telefonoLlamadas={item.telefonoLlamadas}
                     telefonoWhatsapp={item.telefonoWhatsapp}      
             >
