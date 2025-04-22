@@ -11,7 +11,7 @@ interface SolicitudRegistroLocal {
   nombre: string;
   fotoPerfil: string;
   descripcion: string;
-  categoriaId: number | string;
+  categoria: string;
   telefonoWhatsapp?: string;
   telefonoLlamadas?: string;
 }
@@ -20,7 +20,7 @@ const LocalCard: React.FC<SolicitudRegistroLocal> = ({
   nombre,
   fotoPerfil,
   descripcion,
-  categoriaId,
+  categoria,
   telefonoLlamadas,
     telefonoWhatsapp,
 }) => {
@@ -50,7 +50,7 @@ const [motivoRechazo, setMotivoRechazo] = useState('');
         <Image source={{ uri: fotoPerfil }} style={styles.imagen} />
         <View style={styles.textoContainer}>
           <Text style={styles.nombre}>{nombre}</Text>
-          <Text style={styles.categoria}>Categoría ID: {categoriaId}</Text>
+          <Text style={styles.categoria}>Categoría: {}</Text>
           <Text style={styles.descripcion}>{descripcion}</Text>
         </View>
         <TouchableOpacity onPress={() => handlePress()}>
