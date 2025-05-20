@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Switch, Modal } from 'react-native';
-import { Checkbox, Icon } from 'react-native-paper'; // Importamos Checkbox de react-native-paper
+import { View, TextInput, Text, StyleSheet, ScrollView, Alert, Switch } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import {CustomCheckboxComponent} from '../../components/FormComponents/CustomCheckboxComponent';
@@ -9,24 +8,28 @@ import CustomSubmit from '../../components/FormComponents/CustomSubmit';
 import CustomPicker from '../../../presentation/components/FormComponents/CustomPicker';
 // import RNPickerSelect from 'react-native-picker-select'; 
 
-interface Provincia {
-  id: string;
-  nombre: string;
-}
-
-interface Localidad {
-  id: string;
-  nombre: string;
-}
-
-interface OpcionPicker {
+export interface OpcionPicker {
   label: string;
   value: string;
 }
 
+interface PickerItem {
+  label: string;
+  value: string | number;
+}
+
+type Provincia = {
+  nombre: string;
+};
+
+type Localidad = {
+  nombre: string;
+};
+
 type Categoria = {
   id: number;
   nombre: string;
+  tipo?: string;
 };
 
 
@@ -37,15 +40,32 @@ const RegistroLocal: React.FC = () => {
   const [numeroWhatsapp, setNumeroWhatsapp] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
   const [direccion, setDireccion] = useState<string>('');
-  const [provincias, setProvincias] = useState<OpcionPicker[]>([]);
-  const [localidades, setLocalidades] = useState<OpcionPicker[]>([]);
-  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
-  const [localidadSeleccionada, setLocalidadSeleccionada] = useState("");
-  const [ubicacionGoogleMaps, setUbicacion] = useState("");
 
-  const [categoriasDisponibles, setCategoriasDisponibles] = useState<OpcionPicker[]>([]);
-  const [categoriaPadreSeleccionada, setCategoriaPadreSeleccionada] = useState("");
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
+  const [ubicacionGoogleMaps, setUbicacion] = useState("");
+  const [loadingCategoriasPadreDisponibles, setLoadingCategoriasPadreDisponibles] = useState(true);
+  
+
+// Estados para provincias
+const [provincias, setProvincias] = useState<PickerItem[]>([]);
+const [provinciaSeleccionada, setProvinciaSeleccionada] = useState<string>('');
+const [loadingProvincias, setLoadingProvincias] = useState<boolean>(true);
+
+// Estados para localidades (dependientes de provincia)
+const [localidades, setLocalidades] = useState<PickerItem[]>([]);
+const [localidadSeleccionada, setLocalidadSeleccionada] = useState<string>('');
+const [loadingLocalidades, setLoadingLocalidades] = useState<boolean>(false);
+
+// Estados para categorías padres
+const [categoriasPadreDisponibles, setCategoriasPadreDisponibles] = useState<PickerItem[]>([]);
+const [categoriaPadreSeleccionada, setCategoriaPadreSeleccionada] = useState<number>(0);
+const [loadingCategoriasPadre, setLoadingCategoriasPadre] = useState<boolean>(true);
+
+// Estados para subcategorías (dependientes de categoría padre)
+const [categoriasDisponibles, setCategoriasDisponibles] = useState<PickerItem[]>([]);
+const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<number>(0);
+const [loadingCategorias, setLoadingCategorias] = useState<boolean>(false);
+
+  const [loadingCategoriasDisponibles, setLoadingCategoriasDisponibles] = useState(true);
   
   const [horaInicio, setHoraInicio] = useState<string>('08');
   const [minutoInicio, setMinutoInicio] = useState<string>('00');
@@ -64,76 +84,188 @@ const RegistroLocal: React.FC = () => {
   const [fotoPerfil, setFotoPerfil] = useState("");
   const [fotoBanner, setFotoBanner] = useState("");
 
-  useEffect(() => {
-    // Cargar provincias al iniciar el componente
+  // useEffect(() => {
+  //   axios
+  //   .get('https://apis.datos.gob.ar/georef/api/provincias')
+  //   .then(response => {
+  //     const provinciasData = response.data.provincias
+  //       .map((prov: { nombre: string }) => ({
+  //         label: prov.nombre,
+  //         value: prov.nombre,
+  //       }))
+  //       .sort((a: { label: string; }, b: { label: string; }) => a.label.localeCompare(b.label));
+  //     setProvincias(provinciasData);
+  //   })
+  //   .catch(error => {
+  //     Alert.alert('Error', 'No se pudieron cargar las provincias. Código: ' + error);
+  //   })
+  //   .finally(() => setLoadingProvincias(false));
 
-    axios.get<{ provincias: Provincia[] }>('https://apis.datos.gob.ar/georef/api/provincias')
-      .then(response => {
-        const provinciasData = response.data.provincias
-          .map((prov: Provincia) => ({
-            label: prov.nombre,
-            value: prov.id
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar alfabéticamente
+  //   axios
+  //   .get('http://10.0.2.2:8080/api/categorias/padres')
+  //   .then(response => {
+  //     console.log(response.data)
+  //     const categoriasData: OpcionPicker[] = response.data
+  //       .map((cat: { nombre: any,value: any }) => ({
+  //         label: cat.nombre,
+  //         value: cat.value,
+  //       }))
+  //       .sort((a: { label: string; }, b: { label: string; }) => a.label.localeCompare(b.label));
+  //     setCategoriasPadreDisponibles(categoriasData);
+  //   })
+  //   .catch(error => {
+  //     Alert.alert('Error', 'No se pudieron cargar las categorias principales. Código: ' + error);
+  //   })
+  //   .finally(() => setLoadingCategoriasPadreDisponibles(false));
+  // }, []);
   
-        setProvincias(provinciasData);
-      })
-      .catch(error => {
-        Alert.alert('Error', 'No se pudieron cargar las provincias.' + 'Codigo de error: ' + error);
-      });
-
-      axios.get('http://10.0.2.2:8080/api/categorias/padres')
-      .then(res => {
-      const opciones = res.data.map((categoria: { nombre: string; id: number; }) => ({
-        label: categoria.nombre,
-        value: categoria.id,
-      }));
-      setCategoriasDisponibles(opciones);
-    })
-    .catch(err => console.error(err));
-
-  }, []);
-
-
+  // useEffect(() => {
+  //   if (provinciaSeleccionada) {
+  //     setLoadingLocalidades(true);
+  //     setLocalidades([]); // Limpia localidades previas al seleccionar nueva provincia
   
-  useEffect(() => {
-    if (provinciaSeleccionada) {
-      axios.get<{ localidades: Localidad[] }>(`https://apis.datos.gob.ar/georef/api/localidades?provincia=${provinciaSeleccionada}&campos=id,nombre&max=5000`)
-        .then(response => {
-          const localidadesData = response.data.localidades
-            .map((loc: Localidad) => ({
-              label: loc.nombre,
-              value: loc.id
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label)); // Ordenar alfabéticamente
+  //     axios
+  //       .get(`https://apis.datos.gob.ar/georef/api/localidades?provincia=${provinciaSeleccionada}&campos=id,nombre&max=5000`)
+  //       .then(response => {
+  //         const localidadesData = response.data.localidades
+  //           .map((loc: { nombre: string }) => ({
+  //             label: loc.nombre,
+  //             value: loc.nombre,
+  //           }))
+  //           .sort((a: { label: string; }, b: { label: string; }) => a.label.localeCompare(b.label));
   
-          setLocalidades(localidadesData);
-        })
-        .catch(error => {
-          Alert.alert('Error', 'No se pudieron cargar las localidades.');
-        });
-    }
-  }, [provinciaSeleccionada]);
+  //         setLocalidades(localidadesData);
+  //       })
+  //       .catch(error => {
+  //         Alert.alert('Error', 'No se pudieron cargar las localidades.\nCódigo: ' + error);
+  //       })
+  //       .finally(() => setLoadingLocalidades(false));
+  //   }
+  // }, [provinciaSeleccionada]);
   
-  useEffect(() => {
-    if (categoriaPadreSeleccionada) {
-      axios.get<Categoria[]>(`http://10.0.2.2:8080/api/categorias/${categoriaPadreSeleccionada}`)
-        .then(response => {
-          const categoriasData: OpcionPicker[] = response.data
-          .map((cat) => ({
-            label: cat.nombre,
-            value: String(cat.id)  // 👈 acá la magia
-          }))
-          .sort((a, b) => a.label.localeCompare(b.label));
 
-        setCategoriasDisponibles(categoriasData);
-        })
-        .catch(error => {
-    Alert.alert('Error', 'No se pudieron cargar las categorías.' + error);
-  });
-    }
-  }, [categoriaPadreSeleccionada]);
+  // useEffect(() => {
+  //   if (categoriaPadreSeleccionada === 1 || 2 || 3) {
+  //     axios.get(`http://10.0.2.2:8080/api/subcategorias/${categoriaPadreSeleccionada}`)
+  //       .then(response => {
+  //         const categoriasData: OpcionPicker[] = response.data.map((cat: { nombre: string; id: number }) => ({
+  //           label: cat.nombre,
+  //           value: cat.id,
+  //         }));
+  //         setCategoriasDisponibles(categoriasData);
+  //       })
+  //       .catch(error => {
+  //         Alert.alert('Error', 'No se pudieron cargar las categorías hijas. ' + error);
+  //       });
+        
+  //   }
+  // }, [categoriaPadreSeleccionada]);
   
+  
+const fetchProvincias = async () => {
+  setLoadingProvincias(true);
+  try {
+    const response = await axios.get('https://apis.datos.gob.ar/georef/api/provincias');
+    const provinciasData = response.data.provincias
+      .map((prov: Provincia) => ({
+        label: prov.nombre,
+        value: prov.nombre,
+      }))
+      .sort((a: PickerItem, b: PickerItem) => 
+        a.label.localeCompare(b.label, 'es', { sensitivity: 'base' })
+      );
+    setProvincias(provinciasData);
+  } catch (error) {
+    Alert.alert('Error', 'No se pudieron cargar las provincias.');
+    console.error('Error fetching provinces:', error);
+  } finally {
+    setLoadingProvincias(false);
+  }
+};
+
+const fetchCategoriasPadres = async () => {
+  setLoadingCategoriasPadreDisponibles(true);
+  try {
+    const response = await axios.get('http://10.0.2.2:8080/api/categorias/padres');
+    const categoriasData: PickerItem[] = response.data
+      .map((cat: Categoria) => ({
+        label: cat.nombre,
+        value: cat.id,
+      }))
+      .sort((a: PickerItem, b: PickerItem) => 
+        a.label.localeCompare(b.label, 'es', { sensitivity: 'base' })
+      );
+    setCategoriasPadreDisponibles(categoriasData);
+  } catch (error) {
+    Alert.alert('Error', 'No se pudieron cargar las categorías principales.');
+    console.error('Error fetching main categories:', error);
+  } finally {
+    setLoadingCategoriasPadreDisponibles(false);
+  }
+};
+
+const fetchLocalidades = async (provincia: string) => {
+  setLoadingLocalidades(true);
+  setLocalidades([]);
+  
+  try {
+    const response = await axios.get(
+      `https://apis.datos.gob.ar/georef/api/localidades?provincia=${provincia}&campos=id,nombre&max=5000`
+    );
+    const localidadesData = response.data.localidades
+      .map((loc: Localidad) => ({
+        label: loc.nombre,
+        value: loc.nombre,
+      }))
+      .sort((a: PickerItem, b: PickerItem) => 
+        a.label.localeCompare(b.label, 'es', { sensitivity: 'base' })
+      );
+    setLocalidades(localidadesData);
+  } catch (error) {
+    Alert.alert('Error', 'No se pudieron cargar las localidades.');
+    console.error('Error fetching locations:', error);
+  } finally {
+    setLoadingLocalidades(false);
+  }
+};
+
+const fetchSubcategorias = async (categoriaId: number) => {
+  setLoadingCategoriasDisponibles(true);
+  try {
+    const response = await axios.get(`http://10.0.2.2:8080/api/categorias/subcategorias/${categoriaId}`);
+    const categoriasData: PickerItem[] = response.data.map((cat: Categoria) => ({
+      label: cat.nombre,
+      value: cat.id,
+    }));
+    setCategoriasDisponibles(categoriasData);
+  } catch (error) {
+    Alert.alert('Error', 'No se pudieron cargar las subcategorías.');
+    console.error('Error fetching subcategories:', error);
+  } finally {
+    setLoadingCategoriasDisponibles(false);
+  }
+};
+
+useEffect(() => {
+  fetchProvincias();
+  fetchCategoriasPadres();
+}, []);
+
+useEffect(() => {
+  if (provinciaSeleccionada) {
+    fetchLocalidades(provinciaSeleccionada);
+  }
+}, [provinciaSeleccionada]);
+
+useEffect(() => {
+  if (categoriaPadreSeleccionada) {
+    console.log(categoriaPadreSeleccionada)
+    fetchSubcategorias(categoriaPadreSeleccionada);
+  }
+}, [categoriaPadreSeleccionada]);
+
+
+
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const validarFormulario = () => {
@@ -149,7 +281,7 @@ const RegistroLocal: React.FC = () => {
       Alert.alert('Error', 'El número de WhatsApp debe contener solo números.');
       return false;
     }
-    if (!categoriaSeleccionada.trim()) {
+    if (!categoriaSeleccionada || categoriaSeleccionada === 0) {
       Alert.alert('Error', 'La categoría es obligatoria.');
       return false;
     }
@@ -180,7 +312,7 @@ const RegistroLocal: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validarFormulario()) {
       return;
     }
@@ -197,9 +329,9 @@ const RegistroLocal: React.FC = () => {
         "usuarioId": 1,
         "categoriaId":categoriaSeleccionada,
         "nombre": nombreComercial,
+        "direccion": direccion,
         "provincia": provinciaSeleccionada,
         "localidad": localidadSeleccionada,
-        "direccion": direccion,
         "telefonoLlamadas": numeroContacto,
         "telefonoWhatsapp": numeroWhatsapp,
         "descripcion": descripcion ? descripcion : null,
@@ -215,8 +347,19 @@ const RegistroLocal: React.FC = () => {
         "fotoPerfil": fotoPerfil,
         "fotoBanner": fotoBanner
     };
-    console.log('Datos del formulario:', formData);
-    Alert.alert('Éxito', 'Formulario enviado correctamente.');
+    console.log(JSON.stringify(formData, null, 2));
+    try {
+      const response = await axios.post('http://10.0.2.2:8080/api/solicitudes', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      Alert.alert("Éxito", "Solicitud enviada correctamente." + response.status);
+    } catch (error) {
+      Alert.alert("Error", "Hubo un problema al enviar la solicitud.");
+      console.error(error);
+    }
   };
 
   const generarOpciones = (inicio: number, fin: number) => {
@@ -242,20 +385,52 @@ const RegistroLocal: React.FC = () => {
 
         <CustomTextInput value={numeroWhatsapp} onChangeText={setNumeroWhatsapp} placeholder="Número de WhatsApp" keyboardType="phone-pad"/>
 
-        <CustomPicker selectedValue={provinciaSeleccionada} items={provincias} onValueChange={setProvinciaSeleccionada} placeholder='Seleccionar provincia'/>
+        <CustomPicker
+  selectedValue={provinciaSeleccionada}
+  onValueChange={(value) => setProvinciaSeleccionada(value as string)}
+  items={provincias}
+  placeholder="Seleccione una provincia"
+  disabled={loadingProvincias}
+  testID="provincia-picker"
+/>
 
-          {provinciaSeleccionada ? (
-            <CustomPicker selectedValue={localidadSeleccionada} items={localidades} onValueChange={setLocalidadSeleccionada} placeholder='Seleccionar localidad'/>
-          ) : null}
+          {provinciaSeleccionada && (
+  <CustomPicker
+    selectedValue={localidadSeleccionada}
+    onValueChange={(value) => setLocalidadSeleccionada(value as string)}
+    items={localidades}
+    placeholder="Seleccione una localidad"
+    disabled={loadingLocalidades || !provinciaSeleccionada}
+    testID="localidad-picker"
+  />
+)}
 
 
 
   
-        <CustomPicker items={categoriasDisponibles} selectedValue={''} onValueChange={setCategoriaPadreSeleccionada} placeholder={'Categoria'}
+        <CustomPicker
+  selectedValue={categoriaPadreSeleccionada}
+  onValueChange={(value) => {
+    setCategoriaPadreSeleccionada(value as number);
+    setCategoriaSeleccionada(0); // Resetear subcategoría
+  }}
+  items={categoriasPadreDisponibles}
+  placeholder="Seleccione una categoría"
+  disabled={loadingCategoriasPadreDisponibles}
+  testID="categoria-padre-picker"
+/>
+          {categoriaPadreSeleccionada && (
+  <CustomPicker
+    selectedValue={categoriaSeleccionada}
+    onValueChange={(value) => setCategoriaSeleccionada(value as number)}
+    items={categoriasDisponibles}
+    placeholder="Seleccione una subcategoría"
+    disabled={loadingCategoriasDisponibles || !categoriaPadreSeleccionada}
+    testID="subcategoria-picker"
+  />
+)}
 
 
-
-        />
         <TextInput placeholderTextColor={'#999'} style={styles.textArea} value={descripcion} onChangeText={setDescripcion} placeholder="Da una reseña sobre tu negocio para hacerle saber a los usuarios cuáles son los servicios que prestas." multiline />
         <View style={styles.switchContainer}>
         <Text style={styles.label}>Servicio 24 horas</Text>
