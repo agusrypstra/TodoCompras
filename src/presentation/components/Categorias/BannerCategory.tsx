@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     height: 350, // Ajusta el tamaño según tus necesidades
   },
   image: {
-    width: '100%', // Ajusta el tamaño según tus necesidades
+    width: '80%', // Ajusta el tamaño según tus necesidades
     height: '100%', // Ajusta el tamaño según tus necesidades
     borderRadius: 10, // Bordes redondeados
   },

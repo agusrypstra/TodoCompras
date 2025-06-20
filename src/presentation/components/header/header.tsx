@@ -36,7 +36,11 @@ export const Header: React.FC = () => {
         />
 
         {/* Campana a la derecha */}
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer}
+          onPress={() => {
+            navigation.navigate('Notifications');
+          }
+        }>
           <Icon name="notifications-outline" size={40} />
         </TouchableOpacity>
       </View>
@@ -54,13 +58,31 @@ export const Header: React.FC = () => {
             }}>Inicio</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Perfil</Text>
+          <Text style={styles.menuText} onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Perfil',{perfilId: 1}) // Navega a Categorías
+          }}>Perfil</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Configuración</Text>
+          <Text style={styles.menuText}
+          onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Login')
+          }}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuText}>Cerrar sesión</Text>
+          <Text style={styles.menuText}
+          onPress={()=>{
+            toggleMenu()
+            navigation.navigate('RegistroLocal')
+          }}>Registrar local</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem}>
+          <Text style={styles.menuText}
+          onPress={()=>{
+            toggleMenu()
+            navigation.navigate('Registro')
+          }}>Registrar usuario</Text>
         </TouchableOpacity>
       </Animated.View>
     </>
@@ -114,6 +136,7 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 22,
   },
+  
 });
 
 export default Header;

@@ -7,17 +7,21 @@ import HomeScreen from '../screens/Home/HomeScreen';
 import CategoriasScreen from '../screens/Categorias/CategoriasScreen';
 import PerfilesScreen from '../screens/Categorias/PerfilesScreen';
 import PerfilScreen from '../screens/Perfil/PerfilScreen';
-import SolicitudesScreen from '../screens/Solicitudes/SolicitudesScreen';
+import { NotificationScreen } from '../screens/Notifications/NotificationsScreen';
+import RegistroScreen from '../screens/RegistroUsuario/RegistroScreen';
 
 // Definir los tipos de las rutas
 
 export type RootStackParamList = {
   navigate(arg0: string, arg1: { perfilId: number; }): unknown;
   Login: undefined;
-  Registro: undefined;
+  RegistroLocal: undefined;
   Home: undefined;
   Categorias: { id: number; subcategorias?: any[] };
   Perfiles: { subcategoriaId: number }; // Definir la pantalla Perfiles y sus parámetros
+  Perfil: undefined; // Definir la pantalla Perfiles y sus parámetros
+  Notifications: undefined; // Definir la pantalla Perfiles y sus parámetros
+  Registro: undefined; // Definir la pantalla Perfiles y sus parámetros
 };
 
 // Crear el Stack Navigator
@@ -28,10 +32,13 @@ const StackNavigator = () => {
   return (  
     <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }} >
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Registro" component={RegistroLocal} />
+      <Stack.Screen name="RegistroLocal" component={RegistroLocal} />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Categorias" component={CategoriasScreen} />
       <Stack.Screen name="Perfiles" component={PerfilesScreen} />
+      <Stack.Screen name="Perfil" component={PerfilScreen} />
+      <Stack.Screen name="Notifications" component={NotificationScreen} />
+      <Stack.Screen name="Registro" component={RegistroScreen} />
     </Stack.Navigator>
   );
 };

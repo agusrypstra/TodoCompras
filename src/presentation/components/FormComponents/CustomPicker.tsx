@@ -114,12 +114,6 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
           />
         ))}
       </Picker>
-      <Ionicons
-        name={iconName}
-        size={iconSize}
-        color={iconColor}
-        style={styles.icon}
-      />
     </View>
   );
 };

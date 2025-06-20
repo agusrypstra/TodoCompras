@@ -92,7 +92,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({navigation} :LoginScree
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 30,
+    padding: 50,
     height: "75%",
     justifyContent: "center",
     gap: 20,
@@ -118,16 +118,16 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 5,
   },
   forgotPassword: {
     color: "#007bff",
-    fontSize: 14,
+    fontSize: 18,
     marginVertical: 5,
   },
   registerText: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 10,
   },
   registerLink: {
