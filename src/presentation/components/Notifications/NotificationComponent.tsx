@@ -1,13 +1,16 @@
 import React from "react";
 import { Image, Text, View } from "react-native";
 
-interface NotificationProp {
-    id:number;
-    message: string;
+interface Notification {
+  id: number;
+  title: string;
+  description: string;
+  isRead?: boolean;
+  date?: string;
 }
 
 
-const NotificationComponent: React.FC<NotificationProp> = ({id,message}) => {
+const NotificationComponent: React.FC<Notification> = ({id,title,description,isRead}) => {
   return (
         <View
             style={{
@@ -29,10 +32,10 @@ const NotificationComponent: React.FC<NotificationProp> = ({id,message}) => {
 
             <View style={{ flex: 5}}>
                 <Text style={{ fontSize: 24, fontWeight: "bold", color: "#333"}}>
-                    Notificación #{id}
+                    {title}
                 </Text>
                 <Text style={{ fontSize: 16, color: "#333"}}>
-                    {message}
+                    {description}
                 </Text>
             </View>
             <View>
